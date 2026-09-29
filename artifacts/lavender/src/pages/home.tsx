@@ -47,7 +47,7 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
     <article className="group reveal" style={{ transitionDelay: `${(index % 4) * 80}ms` }} data-testid={`card-product-${p.id}`}>
       <div className="relative overflow-hidden rounded-t-[999px] rounded-b-[28px] bg-secondary shadow-[0_20px_40px_-28px_hsl(289_32%_30%/0.5)]">
         <button onClick={onOpen} className="block w-full aspect-[4/5] focus-visible:outline-2 focus-visible:outline-primary" aria-label={`عرض تفاصيل ${p.name}`} data-testid={`button-open-${p.id}`}>
-          <img src={p.image} alt={p.name} loading="lazy" className={`h-full w-full ${p.actualPrice ? "object-contain" : "object-cover"} transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]`} />
+          <img src={p.image} alt={p.name} loading="lazy" className={`h-full w-full ${p.actualPrice || p.suppliedPhoto ? "object-contain" : "object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"}`} />
           <span className="absolute inset-0 bg-gradient-to-t from-[hsl(289_32%_20%/0.35)] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         </button>
         <button onClick={onFav} aria-pressed={fav} aria-label={fav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"} className="absolute top-[18%] left-4 grid h-10 w-10 place-items-center rounded-full bg-card/85 backdrop-blur transition-transform hover:scale-110 active:scale-95" data-testid={`button-fav-${p.id}`}>
@@ -61,6 +61,7 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
         <p className="text-xs tracking-wide text-muted-foreground">{cat}</p>
         <h3 className="font-amiri text-xl text-foreground mt-1">{p.name}</h3>
         <p className="mt-1 text-sm text-primary" data-testid={`text-price-${p.id}`}>{formatProductPrice(p)}</p>
+        {p.perItem && <p className="mt-1 text-xs text-muted-foreground">للقطعة الواحدة، وليس لكل ما في الصورة</p>}
       </div>
     </article>
   );
@@ -94,7 +95,7 @@ export default function Home() {
   const bagItems = Object.entries(bag).map(([id, n]) => ({ p: products.find((x) => x.id === id), n })).filter((x): x is { p: Product; n: number } => !!x.p);
   const count = bagItems.reduce((s, x) => s + x.n, 0);
   const actualTotal = bagItems.filter(({ p }) => p.actualPrice && p.currency === "ILS").reduce((s, x) => s + x.n * x.p.price, 0);
-  const demoItems = bagItems.filter(({ p }) => !p.actualPrice);
+  const demoItems = bagItems.filter(({ p }) => !p.currency && !p.actualPrice);
   const demoTotal = demoItems.reduce((s, x) => s + x.n * x.p.price, 0);
 
   const addToBag = (id: string, n = 1) => { add(id, n); setPulse(true); setTimeout(() => setPulse(false), 600); };
@@ -227,7 +228,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-5">
           <div className="text-center reveal">
             <h2 className="font-ruqaa text-5xl text-primary">{onlyFavs ? "مفضّلاتكِ" : "الرفوف"}</h2>
-            <p className="mt-3 text-muted-foreground">الأكواب بصورها وأسعارها الفعلية المزوّدة: ٢٠ شيكل للكوب. باقي المنتجات وأسعارها توضيحية. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
+            <p className="mt-3 text-muted-foreground">الأكواب والعطور بالصور الحقيقية المزوّدة: الأكواب بسعر ٢٠ شيكل للكوب، والعطور من ٥٠ إلى ٧٠ شيكل للقطعة. باقي المنتجات وأسعارها توضيحية. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
           </div>
           <div className="mt-10 flex flex-col items-center gap-5">
             <label className="relative w-full max-w-md">
@@ -256,8 +257,8 @@ export default function Home() {
           {list.length === 0 ? (
             <div className="mx-auto mt-16 max-w-sm text-center" data-testid="status-empty">
               <Sprig className="mx-auto h-28 w-10 opacity-70" />
-              <p className="mt-4 font-amiri text-2xl text-primary">{cat === "perfumes" ? "لا توجد عطور معروضة بعد" : onlyFavs && favs.length === 0 ? "لم تختاري مفضّلات بعد" : "لا شيء هنا بعد"}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{cat === "perfumes" ? "بانتظار إضافة صور العطور وتفاصيلها. يمكنكِ تصفّح الأقسام الأخرى الآن." : onlyFavs && favs.length === 0 ? "اضغطي على القلب فوق أي منتج ليظهر هنا." : "جرّبي كلمة أخرى أو قسماً مختلفاً."}</p>
+              <p className="mt-4 font-amiri text-2xl text-primary">{onlyFavs && favs.length === 0 ? "لم تختاري مفضّلات بعد" : "لا توجد منتجات تطابق اختياركِ"}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{onlyFavs && favs.length === 0 ? "اضغطي على القلب فوق أي منتج ليظهر هنا." : "جرّبي كلمة أخرى أو غيّري التصفية لعرض المنتجات."}</p>
               <button onClick={() => { setQ(""); setCat("all"); setOnlyFavs(false); }} className="mt-6 rounded-full border border-primary/30 px-6 py-2.5 text-sm text-primary hover:bg-secondary" data-testid="button-reset-filters">عرض كل المنتجات</button>
             </div>
           ) : (
@@ -294,7 +295,7 @@ export default function Home() {
           <img src={LOGO} alt="" className="h-20 w-20 rounded-full" />
           <p className="font-ruqaa text-2xl text-primary">لافندر آند مور</p>
           <p className="font-latin text-muted-foreground" dir="ltr">Once a dream, now a reality.</p>
-          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">صور الأكواب وأسعارها فعلية ومزوّدة من المتجر؛ باقي المنتجات والأسعار توضيحية. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
+          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">صور الأكواب والعطور حقيقية ومزوّدة من المتجر. الأكواب بسعر ٢٠ شيكل؛ العطور من ٥٠ إلى ٧٠ شيكل للقطعة. باقي المنتجات والأسعار توضيحية. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
         </div>
       </footer>
 
@@ -303,7 +304,7 @@ export default function Home() {
         <DialogContent className="max-w-3xl overflow-hidden rounded-[32px] border-primary/10 bg-background p-0 [&>button]:left-4 [&>button]:right-auto" dir="rtl">
           {open && (
             <div className="grid md:grid-cols-2">
-              <img src={open.image} alt={open.name} className={`h-64 w-full ${open.actualPrice ? "object-contain" : "object-cover"} md:h-full`} />
+              <img src={open.image} alt={open.name} className={`h-64 w-full ${open.actualPrice || open.suppliedPhoto ? "object-contain" : "object-cover"} md:h-full`} />
               <div className="p-8 text-right">
                 <p className="text-xs text-muted-foreground">{categories.find((c) => c.id === open.category)?.label}</p>
                 <DialogTitle className="mt-1 font-amiri text-3xl font-normal text-primary">{open.name}</DialogTitle>
@@ -342,13 +343,14 @@ export default function Home() {
               <ul className="space-y-5">
                 {bagItems.map(({ p, n }) => (
                   <li key={p.id} className="flex gap-4" data-testid={`row-bag-${p.id}`}>
-                    <img src={p.image} alt="" className={`h-24 w-20 rounded-2xl ${p.actualPrice ? "object-contain" : "object-cover"}`} />
+                    <img src={p.image} alt="" className={`h-24 w-20 rounded-2xl ${p.actualPrice || p.suppliedPhoto ? "object-contain" : "object-cover"}`} />
                     <div className="flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-amiri text-lg leading-tight">{p.name}</p>
                         <button onClick={() => setQty(p.id, 0)} aria-label={`إزالة ${p.name}`} className="text-muted-foreground hover:text-destructive" data-testid={`button-remove-${p.id}`}><Trash2 className="h-4 w-4" /></button>
                       </div>
                       <p className="text-sm text-primary">{formatProductPrice(p, n)}</p>
+                      {p.perItem && <p className="mt-1 text-xs text-muted-foreground">الكمية بالقطعة، وليست مجموعات الصور</p>}
                       <div className="mt-2 inline-flex items-center rounded-full border border-primary/20">
                         <button onClick={() => setQty(p.id, n + 1)} aria-label="زيادة الكمية" className="grid h-8 w-8 place-items-center hover:text-primary" data-testid={`button-inc-${p.id}`}><Plus className="h-3.5 w-3.5" /></button>
                         <span className="w-8 text-center text-sm" aria-live="polite">{n.toLocaleString("ar-EG")}</span>
@@ -361,11 +363,11 @@ export default function Home() {
             )}
           </div>
           <div className="border-t border-primary/10 bg-card/70 p-6">
-            <div className="flex items-center justify-between font-amiri text-xl"><span>مجموع الأكواب الفعلي</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(actualTotal)} شيكل</span></div>
+            <div className="flex items-center justify-between font-amiri text-xl"><span>مجموع الأكواب والعطور</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(actualTotal)} شيكل</span></div>
             {demoItems.length > 0 && <div className="mt-2 flex items-center justify-between text-sm text-muted-foreground"><span>مجموع توضيحي منفصل (ليس بالشيكل)</span><span data-testid="text-bag-demo-total">{formatPrice(demoTotal)}</span></div>}
             <div className="mt-4 flex gap-3 rounded-2xl bg-secondary p-4 text-sm leading-relaxed text-foreground/80" role="note">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <p>الطلب والدفع عبر الإنترنت غير متاحين بعد. الحقيبة محفوظة على جهازكِ. أسعار الأكواب فعلية؛ باقي الأسعار توضيحية ولا تدخل في مجموع الشيكل.</p>
+              <p>الطلب والدفع عبر الإنترنت غير متاحين بعد. الحقيبة محفوظة على جهازكِ. مجموع الأكواب والعطور بالشيكل. باقي الأسعار توضيحية بلا عملة وتُجمع وحدها.</p>
             </div>
             {bagItems.length > 0 && <button onClick={clear} className="mt-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-destructive" data-testid="button-clear-bag"><X className="h-3.5 w-3.5" /> إفراغ الحقيبة</button>}
           </div>

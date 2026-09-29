@@ -6,6 +6,8 @@ export interface Product {
   category: Exclude<Category, "beauty">;
   price: number;
   actualPrice?: boolean;
+  suppliedPhoto?: boolean;
+  perItem?: boolean;
   currency?: "ILS";
   image: string;
   short: string;
@@ -32,6 +34,12 @@ export const matchesCategory = (product: Product, category: Category | "all") =>
   categories.some((c) => c.id === product.category && c.parent === category);
 
 export const products: Product[] = [
+  { id: "perfume-qissa", name: "عطور قصة", category: "perfumes", price: 70, currency: "ILS", actualPrice: true, suppliedPhoto: true, perItem: true, image: `${import.meta.env.BASE_URL}images/perfume-qissa.jpeg`, short: "تشكيلة عطور قصة بالصورة المزوّدة", description: "صورة مزوّدة لتشكيلة عطور قصة. السعر للقطعة الواحدة، وليس لكل المنتجات الظاهرة في الصورة.", notes: ["للقطعة الواحدة", "ليست مجموعة بسعر واحد"] },
+  { id: "perfume-only-you", name: "عطر Only You", category: "perfumes", price: 60, currency: "ILS", actualPrice: true, suppliedPhoto: true, perItem: true, image: `${import.meta.env.BASE_URL}images/perfume-only-you.jpeg`, short: "عطر Only You بالصورة المزوّدة", description: "عطر Only You كما يظهر في الصورة المزوّدة. السعر للقطعة الواحدة، وليس لمجموعة منتجات.", notes: ["للقطعة الواحدة"] },
+  { id: "perfume-selection", name: "تشكيلة عطور", category: "perfumes", price: 65, currency: "ILS", actualPrice: true, suppliedPhoto: true, perItem: true, image: `${import.meta.env.BASE_URL}images/perfume-selection.jpeg`, short: "تشكيلة تضم عبوة عطر بنفسجية", description: "صورة مزوّدة لعدة عطور، بينها عبوة بنفسجية. السعر لقطعة واحدة فقط، وليس للتشكيلة كاملة. إضافة واحدة للحقيبة تعني قطعة واحدة.", notes: ["للقطعة الواحدة", "ليست مجموعة بسعر واحد"] },
+  { id: "perfume-marshmallow", name: "مارشميلو — عطر ورذاذ للجسم", category: "perfumes", price: 55, currency: "ILS", actualPrice: true, suppliedPhoto: true, perItem: true, image: `${import.meta.env.BASE_URL}images/perfume-marshmallow.jpeg`, short: "عطر ورذاذ للجسم في الصورة المزوّدة", description: "صورة مزوّدة لعطر ورذاذ للجسم مارشميلو. السعر لقطعة واحدة فقط، وليس للعطر والرذاذ معاً.", notes: ["للقطعة الواحدة", "ليست مجموعة بسعر واحد"] },
+  { id: "perfume-white-musk", name: "مسك أبيض — IBRAQ", category: "perfumes", price: 50, currency: "ILS", actualPrice: true, suppliedPhoto: true, perItem: true, image: `${import.meta.env.BASE_URL}images/perfume-white-musk.jpeg`, short: "مسك أبيض بالصورة المزوّدة", description: "مسك أبيض IBRAQ كما يظهر في الصورة المزوّدة. السعر للقطعة الواحدة.", notes: ["للقطعة الواحدة"] },
+  { id: "perfume-powder-musk", name: "مسك باودر — IBRAQ", category: "perfumes", price: 50, currency: "ILS", actualPrice: true, suppliedPhoto: true, perItem: true, image: `${import.meta.env.BASE_URL}images/perfume-powder-musk.jpeg`, short: "مسك باودر بالصورة المزوّدة", description: "مسك باودر IBRAQ كما يظهر في الصورة المزوّدة. السعر للقطعة الواحدة.", notes: ["للقطعة الواحدة"] },
   { id: "serum-lilac", name: "سيروم الوجه الليلكي", category: "cosmetics", price: 185, image: img("serum"), short: "زجاجة بقطّارة لروتين المساء", description: "سيروم خفيف في زجاجة ليلكية أنيقة، يُضاف إلى روتين العناية المسائي. منتج تجريبي للعرض فقط.", notes: ["٣٠ مل", "زجاجة بقطّارة", "للاستخدام المسائي"] },
   { id: "lipstick-plum", name: "أحمر شفاه البرقوق", category: "cosmetics", price: 95, image: img("lipstick"), short: "لون برقوقي بلمسة ساتان", description: "أحمر شفاه بدرجة برقوقية دافئة ولمسة نهائية ساتان، مع علبة كريم صغيرة مرافقة. منتج تجريبي للعرض فقط.", notes: ["لمسة ساتان", "درجة البرقوق", "حجم الحقيبة"] },
   { id: "palette-mauve", name: "باليت ظلال الموف", category: "cosmetics", price: 160, image: img("palette"), short: "درجات موف وبرقوق ناعمة", description: "باليت ظلال عيون بدرجات الموف والوردي الترابي والبرقوق، مع فرشاة صغيرة. منتج تجريبي للعرض فقط.", notes: ["تسع درجات", "فرشاة مرفقة", "مرآة داخلية"] },
@@ -45,4 +53,4 @@ export const products: Product[] = [
 
 export const formatPrice = (n: number) => `${n.toLocaleString("ar-EG")}`;
 export const formatProductPrice = (p: Product, quantity = 1) =>
-  `${formatPrice(p.price * quantity)}${p.actualPrice && p.currency === "ILS" ? " شيكل" : " — سعر توضيحي"}`;
+  `${formatPrice(p.price * quantity)}${p.currency === "ILS" ? " شيكل" : ""}${p.actualPrice ? "" : " — سعر توضيحي"}`;
