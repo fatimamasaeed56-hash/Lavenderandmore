@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/
 import { products, categories, mainCategories, beautyCategories, matchesCategory, formatPrice, formatProductPrice, type Category, type Product } from "@/data/products";
 import { useStore, bagProductId, bagColors, bagKey } from "@/hooks/use-store";
 import { CategoryFeedback } from "@/components/category-feedback";
+import { WhatsAppOrder } from "@/components/whatsapp-order";
 
 const base = import.meta.env.BASE_URL;
 const LOGO = `${base}images/logo.jpeg`;
@@ -242,7 +243,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-5">
           <div className="text-center reveal">
             <h2 className="font-ruqaa text-5xl text-primary">{onlyFavs ? "مفضّلاتكِ" : "الرفوف"}</h2>
-            <p className="mt-3 text-muted-foreground">اكتشفي الأكواب والعطور ومستحضرات التجميل بصور المحل وأسعارها بالشيكل. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
+            <p className="mt-3 text-muted-foreground">اكتشفي الأكواب والعطور ومستحضرات التجميل بصور المحل وأسعارها بالشيكل. الطلب عبر واتساب والدفع عند الاستلام.</p>
           </div>
           <div className="mt-10 flex flex-col items-center gap-5">
             <label className="relative w-full max-w-md">
@@ -321,7 +322,7 @@ export default function Home() {
             <FaWhatsapp className="h-6 w-6 text-[#128C7E]" aria-hidden="true" />
             <span dir="ltr">+972593860029</span>
           </a>
-          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">الأكواب والعطور ومستحضرات التجميل المضافة بصور المحل وأسعارها بالشيكل. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
+          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">الأسعار بالشيكل. الطلب عبر واتساب والدفع عند الاستلام. يُؤكَّد توفر المنتجات ورسوم التوصيل عبر المحادثة.</p>
         </div>
       </footer>
 
@@ -377,7 +378,7 @@ export default function Home() {
                 <button onClick={() => { setBagOpen(false); goShop("all"); }} className="mt-6 rounded-full border border-primary/30 px-6 py-2.5 text-sm text-primary hover:bg-secondary" data-testid="button-bag-browse">تصفّحي المتجر</button>
               </div>
             ) : (
-              <ul className="space-y-5">
+              <><ul className="space-y-5">
                 {bagItems.map(({ id, p, n }) => (
                   <li key={id} className="flex gap-4" data-testid={`row-bag-${p.id}`}>
                     <img src={p.image} alt="" className={`h-24 w-20 rounded-2xl ${p.actualPrice || p.suppliedPhoto ? "object-contain" : "object-cover"}`} />
@@ -397,14 +398,14 @@ export default function Home() {
                     </div>
                   </li>
                 ))}
-              </ul>
+              </ul><WhatsAppOrder items={bagItems} /></>
             )}
           </div>
           <div className="border-t border-primary/10 bg-card/70 p-6">
-            <div className="flex items-center justify-between font-amiri text-xl"><span>المجموع بالشيكل</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(bagTotal)} شيكل</span></div>
+            <div className="flex items-center justify-between font-amiri text-xl"><span>مجموع المنتجات</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(bagTotal)} شيكل</span></div>
             <div className="mt-4 flex gap-3 rounded-2xl bg-secondary p-4 text-sm leading-relaxed text-foreground/80" role="note">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <p>الطلب والدفع عبر الإنترنت غير متاحين بعد. الحقيبة محفوظة على جهازكِ. أسعار منتجات المحل بالشيكل.</p>
+              <p>الدفع عند الاستلام. المجموع لا يشمل التوصيل؛ تُحدَّد رسومه ويُؤكَّد الطلب عبر واتساب. الحقيبة محفوظة على جهازكِ.</p>
             </div>
             {bagItems.length > 0 && <button onClick={clear} className="mt-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-destructive" data-testid="button-clear-bag"><X className="h-3.5 w-3.5" /> إفراغ الحقيبة</button>}
           </div>
