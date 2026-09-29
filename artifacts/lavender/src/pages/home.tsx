@@ -3,7 +3,7 @@ import { Heart, Search, ShoppingBag, Menu, X, Plus, Minus, Trash2, Info, ArrowLe
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { products, categories, mainCategories, beautyCategories, matchesCategory, formatPrice, formatProductPrice, type Category, type Product } from "@/data/products";
-import { useStore } from "@/hooks/use-store";
+import { useStore, bagProductId, bagColors, bagKey } from "@/hooks/use-store";
 import { CategoryFeedback } from "@/components/category-feedback";
 
 const base = import.meta.env.BASE_URL;
@@ -78,6 +78,10 @@ export default function Home() {
   const [q, setQ] = useState("");
   const [onlyFavs, setOnlyFavs] = useState(false);
   const [open, setOpen] = useState<Product | null>(null);
+  const [otherColors, setOtherColors] = useState(false);
+  const [colors, setColors] = useState("");
+  const showProduct = (p: Product) => { setOtherColors(false); setColors(""); setOpen(p); };
+  const selectedBagKey = open ? bagKey(open.id, open.category === "flowers" && otherColors ? colors : "") : "";
   const [bagOpen, setBagOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -103,7 +107,7 @@ export default function Home() {
     return products.filter((p) => matchesCategory(p, cat) && (!onlyFavs || favs.includes(p.id)) && (!t || p.name.includes(t) || p.short.includes(t) || p.description.includes(t)));
   }, [cat, q, onlyFavs, favs]);
 
-  const bagItems = Object.entries(bag).map(([id, n]) => ({ p: products.find((x) => x.id === id), n })).filter((x): x is { p: Product; n: number } => !!x.p);
+  const bagItems = Object.entries(bag).map(([id, n]) => ({ id, p: products.find((x) => x.id === bagProductId(id)), n })).filter((x): x is { id: string; p: Product; n: number } => !!x.p);
   const count = bagItems.reduce((s, x) => s + x.n, 0);
   const bagTotal = bagItems.reduce((s, x) => s + x.n * x.p.price, 0);
 
@@ -278,7 +282,7 @@ export default function Home() {
           ) : (
             <div className="mt-14 grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
               {list.map((p, i) => (
-                <ProductCard key={p.id} index={i} p={p} fav={favs.includes(p.id)} onFav={() => toggleFav(p.id)} onOpen={() => setOpen(p)} onAdd={() => addToBag(p.id)} />
+                <ProductCard key={p.id} index={i} p={p} fav={favs.includes(p.id)} onFav={() => toggleFav(p.id)} onOpen={() => showProduct(p)} onAdd={() => p.category === "flowers" ? showProduct(p) : addToBag(p.id)} />
               ))}
             </div>
           )}
@@ -316,7 +320,7 @@ export default function Home() {
 
       {/* Product dialog */}
       <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
-        <DialogContent className="max-w-3xl overflow-hidden rounded-[32px] border-primary/10 bg-background p-0 [&>button]:left-4 [&>button]:right-auto" dir="rtl">
+        <DialogContent className="max-w-3xl max-h-[90dvh] overflow-y-auto rounded-[32px] border-primary/10 bg-background p-0 [&>button]:left-4 [&>button]:right-auto" dir="rtl">
           {open && (
             <div className="grid md:grid-cols-2">
               <img src={open.image} alt={open.name} className={`h-64 w-full ${open.actualPrice || open.suppliedPhoto ? "object-contain" : "object-cover"} md:h-full`} />
@@ -326,9 +330,20 @@ export default function Home() {
                 <DialogDescription className="mt-4 leading-loose text-foreground/75">{open.description}</DialogDescription>
                 <ul className="mt-5 flex flex-wrap gap-2">{open.notes.map((n) => <li key={n} className="rounded-full bg-secondary px-3 py-1 text-xs text-primary">{n}</li>)}</ul>
                 <p className="mt-6 text-2xl text-primary">{formatProductPrice(open)}</p>
+                {open.category === "flowers" && <div className="mt-5 rounded-2xl border border-primary/20 bg-secondary/40 p-4">
+                  <label className="flex items-center gap-3 text-sm">
+                    <input type="checkbox" checked={otherColors} onChange={(e) => setOtherColors(e.target.checked)} className="h-4 w-4 accent-primary" data-testid="checkbox-other-colors" />
+                    أريد ألواناً أخرى
+                  </label>
+                  {otherColors && <label className="mt-4 block text-sm">
+                    الألوان المطلوبة
+                    <textarea value={colors} onChange={(e) => setColors(e.target.value)} maxLength={200} rows={2} placeholder="مثلاً: ورد أبيض وبنفسجي وتغليف زهري" className="mt-2 w-full rounded-xl border border-input bg-background p-3 focus:ring-2 focus:ring-primary/30" data-testid="input-flower-colors" />
+                    <span className="mt-1 block text-xs text-muted-foreground">اكتبي الألوان قبل إضافة الباقة إلى الحقيبة.</span>
+                  </label>}
+                </div>}
                 <div className="mt-6 flex gap-3">
-                  <button onClick={() => addToBag(open.id)} className="flex-1 rounded-full bg-primary py-3.5 text-primary-foreground transition-transform hover:-translate-y-0.5" data-testid="button-dialog-add">
-                    {bag[open.id] ? `في الحقيبة (${bag[open.id]}) — أضيفي واحدة` : "أضيفي إلى الحقيبة"}
+                  <button onClick={() => addToBag(selectedBagKey)} disabled={open.category === "flowers" && otherColors && !colors.trim()} className="flex-1 rounded-full bg-primary py-3.5 text-primary-foreground transition-transform hover:-translate-y-0.5 disabled:opacity-50" data-testid="button-dialog-add">
+                    {bag[selectedBagKey] ? `في الحقيبة (${bag[selectedBagKey]}) — أضيفي واحدة` : "أضيفي إلى الحقيبة"}
                   </button>
                   <button onClick={() => toggleFav(open.id)} aria-pressed={favs.includes(open.id)} aria-label="المفضلة" className="grid h-12 w-12 place-items-center rounded-full border border-primary/30 hover:bg-secondary" data-testid="button-dialog-fav">
                     <Heart className={`h-5 w-5 ${favs.includes(open.id) ? "fill-primary text-primary" : "text-primary"}`} />
@@ -356,20 +371,21 @@ export default function Home() {
               </div>
             ) : (
               <ul className="space-y-5">
-                {bagItems.map(({ p, n }) => (
-                  <li key={p.id} className="flex gap-4" data-testid={`row-bag-${p.id}`}>
+                {bagItems.map(({ id, p, n }) => (
+                  <li key={id} className="flex gap-4" data-testid={`row-bag-${p.id}`}>
                     <img src={p.image} alt="" className={`h-24 w-20 rounded-2xl ${p.actualPrice || p.suppliedPhoto ? "object-contain" : "object-cover"}`} />
                     <div className="flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-amiri text-lg leading-tight">{p.name}</p>
-                        <button onClick={() => setQty(p.id, 0)} aria-label={`إزالة ${p.name}`} className="text-muted-foreground hover:text-destructive" data-testid={`button-remove-${p.id}`}><Trash2 className="h-4 w-4" /></button>
+                        <button onClick={() => setQty(id, 0)} aria-label={`إزالة ${p.name}`} className="text-muted-foreground hover:text-destructive" data-testid={`button-remove-${p.id}`}><Trash2 className="h-4 w-4" /></button>
                       </div>
                       <p className="text-sm text-primary">{formatProductPrice(p, n)}</p>
+                      {p.category === "flowers" && <p className="mt-1 break-words text-xs text-muted-foreground">{bagColors(id) ? `الألوان المطلوبة: ${bagColors(id)}` : "الألوان كما في الصورة"}</p>}
                       {p.perItem && <p className="mt-1 text-xs text-muted-foreground">الكمية بالقطعة، وليست مجموعات الصور</p>}
                       <div className="mt-2 inline-flex items-center rounded-full border border-primary/20">
-                        <button onClick={() => setQty(p.id, n + 1)} aria-label="زيادة الكمية" className="grid h-8 w-8 place-items-center hover:text-primary" data-testid={`button-inc-${p.id}`}><Plus className="h-3.5 w-3.5" /></button>
+                        <button onClick={() => setQty(id, n + 1)} aria-label="زيادة الكمية" className="grid h-8 w-8 place-items-center hover:text-primary" data-testid={`button-inc-${p.id}`}><Plus className="h-3.5 w-3.5" /></button>
                         <span className="w-8 text-center text-sm" aria-live="polite">{n.toLocaleString("ar-EG")}</span>
-                        <button onClick={() => setQty(p.id, n - 1)} aria-label="إنقاص الكمية" className="grid h-8 w-8 place-items-center hover:text-primary" data-testid={`button-dec-${p.id}`}><Minus className="h-3.5 w-3.5" /></button>
+                        <button onClick={() => setQty(id, n - 1)} aria-label="إنقاص الكمية" className="grid h-8 w-8 place-items-center hover:text-primary" data-testid={`button-dec-${p.id}`}><Minus className="h-3.5 w-3.5" /></button>
                       </div>
                     </div>
                   </li>

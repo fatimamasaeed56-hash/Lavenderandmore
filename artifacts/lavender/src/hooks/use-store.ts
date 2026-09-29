@@ -2,11 +2,16 @@ import { useCallback, useEffect, useState } from "react";
 import { products } from "@/data/products";
 
 const validIds = new Set(products.map((p) => p.id));
+export const bagProductId = (key: string) => key.split("::")[0];
+export const bagColors = (key: string) => {
+  try { return decodeURIComponent(key.split("::")[1] || "").slice(0, 200); } catch { return ""; }
+};
+export const bagKey = (id: string, colors = "") => colors.trim() ? `${id}::${encodeURIComponent(colors.trim().slice(0, 200))}` : id;
 const cleanFavs = (value: unknown): string[] =>
   Array.isArray(value) ? [...new Set(value.filter((id): id is string => typeof id === "string" && validIds.has(id)))] : [];
 const cleanBag = (value: unknown): Record<string, number> =>
   value && typeof value === "object" && !Array.isArray(value)
-    ? Object.fromEntries(Object.entries(value).filter(([id, n]) => validIds.has(id) && typeof n === "number" && Number.isFinite(n) && n >= 1).map(([id, n]) => [id, Math.min(20, Math.floor(n as number))]))
+    ? Object.fromEntries(Object.entries(value).filter(([id, n]) => validIds.has(bagProductId(id)) && typeof n === "number" && Number.isFinite(n) && n >= 1).map(([id, n]) => [id, Math.min(20, Math.floor(n as number))]))
     : {};
 
 function usePersisted<T>(key: string, initial: T, sanitize: (value: unknown) => T) {
