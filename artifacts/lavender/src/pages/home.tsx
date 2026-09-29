@@ -94,9 +94,7 @@ export default function Home() {
 
   const bagItems = Object.entries(bag).map(([id, n]) => ({ p: products.find((x) => x.id === id), n })).filter((x): x is { p: Product; n: number } => !!x.p);
   const count = bagItems.reduce((s, x) => s + x.n, 0);
-  const actualTotal = bagItems.filter(({ p }) => p.actualPrice && p.currency === "ILS").reduce((s, x) => s + x.n * x.p.price, 0);
-  const demoItems = bagItems.filter(({ p }) => !p.currency && !p.actualPrice);
-  const demoTotal = demoItems.reduce((s, x) => s + x.n * x.p.price, 0);
+  const bagTotal = bagItems.reduce((s, x) => s + x.n * x.p.price, 0);
 
   const addToBag = (id: string, n = 1) => { add(id, n); setPulse(true); setTimeout(() => setPulse(false), 600); };
   const goShop = (c?: Category | "all") => { if (c) { setCat(c); setQ(""); } setOnlyFavs(false); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); };
@@ -228,13 +226,13 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-5">
           <div className="text-center reveal">
             <h2 className="font-ruqaa text-5xl text-primary">{onlyFavs ? "مفضّلاتكِ" : "الرفوف"}</h2>
-            <p className="mt-3 text-muted-foreground">اكتشفي الأكواب والعطور ومستحضرات التجميل بصور المحل وأسعارها بالشيكل. المنتجات التي تحمل عبارة «سعر توضيحي» للعرض فقط. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
+            <p className="mt-3 text-muted-foreground">اكتشفي الأكواب والعطور ومستحضرات التجميل بصور المحل وأسعارها بالشيكل. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
           </div>
           <div className="mt-10 flex flex-col items-center gap-5">
             <label className="relative w-full max-w-md">
               <span className="sr-only">ابحثي عن منتج</span>
               <Search className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/60" />
-              <input ref={searchRef} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحثي: سيروم، كوب، باقة..." className="w-full rounded-full border border-input bg-card py-3.5 pr-11 pl-4 outline-none transition-shadow focus:ring-2 focus:ring-ring/40" data-testid="input-search" />
+              <input ref={searchRef} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحثي: عطر، كوب، لوشن..." className="w-full rounded-full border border-input bg-card py-3.5 pr-11 pl-4 outline-none transition-shadow focus:ring-2 focus:ring-ring/40" data-testid="input-search" />
             </label>
             <div className="flex flex-wrap justify-center gap-2" role="group" aria-label="تصفية حسب القسم">
               {categories.filter((c) => !c.parent).map((c) => (
@@ -257,8 +255,8 @@ export default function Home() {
           {list.length === 0 ? (
             <div className="mx-auto mt-16 max-w-sm text-center" data-testid="status-empty">
               <Sprig className="mx-auto h-28 w-10 opacity-70" />
-              <p className="mt-4 font-amiri text-2xl text-primary">{onlyFavs && favs.length === 0 ? "لم تختاري مفضّلات بعد" : "لا توجد منتجات تطابق اختياركِ"}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{onlyFavs && favs.length === 0 ? "اضغطي على القلب فوق أي منتج ليظهر هنا." : "جرّبي كلمة أخرى أو غيّري التصفية لعرض المنتجات."}</p>
+              <p className="mt-4 font-amiri text-2xl text-primary">{onlyFavs && favs.length === 0 ? "لم تختاري مفضّلات بعد" : cat === "flowers" && !q.trim() && !onlyFavs ? "لا توجد منتجات ورد بعد" : "لا توجد منتجات تطابق اختياركِ"}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{onlyFavs && favs.length === 0 ? "اضغطي على القلب فوق أي منتج ليظهر هنا." : cat === "flowers" && !q.trim() && !onlyFavs ? "لم تُضف منتجات إلى هذا القسم بعد. تصفّحي بقية الأقسام." : "جرّبي كلمة أخرى أو غيّري التصفية لعرض المنتجات."}</p>
               <button onClick={() => { setQ(""); setCat("all"); setOnlyFavs(false); }} className="mt-6 rounded-full border border-primary/30 px-6 py-2.5 text-sm text-primary hover:bg-secondary" data-testid="button-reset-filters">عرض كل المنتجات</button>
             </div>
           ) : (
@@ -295,7 +293,7 @@ export default function Home() {
           <img src={LOGO} alt="" className="h-20 w-20 rounded-full" />
           <p className="font-ruqaa text-2xl text-primary">لافندر آند مور</p>
           <p className="font-latin text-muted-foreground" dir="ltr">Once a dream, now a reality.</p>
-          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">الأكواب والعطور ومستحضرات التجميل المضافة بصور المحل وأسعارها بالشيكل. المنتجات التي تحمل عبارة «سعر توضيحي» للعرض فقط. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
+          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">الأكواب والعطور ومستحضرات التجميل المضافة بصور المحل وأسعارها بالشيكل. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
         </div>
       </footer>
 
@@ -363,11 +361,10 @@ export default function Home() {
             )}
           </div>
           <div className="border-t border-primary/10 bg-card/70 p-6">
-            <div className="flex items-center justify-between font-amiri text-xl"><span>المجموع بالشيكل</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(actualTotal)} شيكل</span></div>
-            {demoItems.length > 0 && <div className="mt-2 flex items-center justify-between text-sm text-muted-foreground"><span>مجموع توضيحي منفصل (ليس بالشيكل)</span><span data-testid="text-bag-demo-total">{formatPrice(demoTotal)}</span></div>}
+            <div className="flex items-center justify-between font-amiri text-xl"><span>المجموع بالشيكل</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(bagTotal)} شيكل</span></div>
             <div className="mt-4 flex gap-3 rounded-2xl bg-secondary p-4 text-sm leading-relaxed text-foreground/80" role="note">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <p>الطلب والدفع عبر الإنترنت غير متاحين بعد. الحقيبة محفوظة على جهازكِ. أسعار منتجات المحل بالشيكل. الأسعار التوضيحية بلا عملة وتُجمع وحدها.</p>
+              <p>الطلب والدفع عبر الإنترنت غير متاحين بعد. الحقيبة محفوظة على جهازكِ. أسعار منتجات المحل بالشيكل.</p>
             </div>
             {bagItems.length > 0 && <button onClick={clear} className="mt-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-destructive" data-testid="button-clear-bag"><X className="h-3.5 w-3.5" /> إفراغ الحقيبة</button>}
           </div>
