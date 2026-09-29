@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Heart, Search, ShoppingBag, Menu, X, Plus, Minus, Trash2, Info, ArrowLeft } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { products, categories, mainCategories, beautyCategories, matchesCategory, formatPrice, formatProductPrice, type Category, type Product } from "@/data/products";
@@ -314,6 +315,12 @@ export default function Home() {
           <img src={LOGO} alt="" className="h-20 w-20 rounded-full" />
           <p className="font-latin text-2xl text-primary" dir="ltr">Lavender &amp; More</p>
           <p className="font-latin text-muted-foreground" dir="ltr">Once a dream, now a reality.</p>
+          <p className="text-primary">موقعنا فلسطين — متوفر التوصيل</p>
+          <p className="text-sm text-muted-foreground">للتواصل والاستفسار عبر واتساب</p>
+          <a href="https://wa.me/972593860029" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 rounded-full border border-primary/20 px-6 py-3 text-primary transition-colors hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" aria-label="تواصل معنا على واتساب على الرقم +972593860029" data-testid="footer-whatsapp">
+            <FaWhatsapp className="h-6 w-6 text-[#128C7E]" aria-hidden="true" />
+            <span dir="ltr">+972593860029</span>
+          </a>
           <p className="max-w-md text-xs leading-relaxed text-muted-foreground">الأكواب والعطور ومستحضرات التجميل المضافة بصور المحل وأسعارها بالشيكل. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
         </div>
       </footer>
