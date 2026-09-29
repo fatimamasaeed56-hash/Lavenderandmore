@@ -228,7 +228,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-5">
           <div className="text-center reveal">
             <h2 className="font-ruqaa text-5xl text-primary">{onlyFavs ? "مفضّلاتكِ" : "الرفوف"}</h2>
-            <p className="mt-3 text-muted-foreground">الأكواب والعطور بالصور الحقيقية المزوّدة: الأكواب بسعر ٢٠ شيكل للكوب، والعطور من ٥٠ إلى ٧٠ شيكل للقطعة. باقي المنتجات وأسعارها توضيحية. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
+            <p className="mt-3 text-muted-foreground">اكتشفي الأكواب والعطور ومستحضرات التجميل بصور المحل وأسعارها بالشيكل. المنتجات التي تحمل عبارة «سعر توضيحي» للعرض فقط. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
           </div>
           <div className="mt-10 flex flex-col items-center gap-5">
             <label className="relative w-full max-w-md">
@@ -295,7 +295,7 @@ export default function Home() {
           <img src={LOGO} alt="" className="h-20 w-20 rounded-full" />
           <p className="font-ruqaa text-2xl text-primary">لافندر آند مور</p>
           <p className="font-latin text-muted-foreground" dir="ltr">Once a dream, now a reality.</p>
-          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">صور الأكواب والعطور حقيقية ومزوّدة من المتجر. الأكواب بسعر ٢٠ شيكل؛ العطور من ٥٠ إلى ٧٠ شيكل للقطعة. باقي المنتجات والأسعار توضيحية. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
+          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">الأكواب والعطور ومستحضرات التجميل المضافة بصور المحل وأسعارها بالشيكل. المنتجات التي تحمل عبارة «سعر توضيحي» للعرض فقط. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
         </div>
       </footer>
 
@@ -363,11 +363,11 @@ export default function Home() {
             )}
           </div>
           <div className="border-t border-primary/10 bg-card/70 p-6">
-            <div className="flex items-center justify-between font-amiri text-xl"><span>مجموع الأكواب والعطور</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(actualTotal)} شيكل</span></div>
+            <div className="flex items-center justify-between font-amiri text-xl"><span>المجموع بالشيكل</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(actualTotal)} شيكل</span></div>
             {demoItems.length > 0 && <div className="mt-2 flex items-center justify-between text-sm text-muted-foreground"><span>مجموع توضيحي منفصل (ليس بالشيكل)</span><span data-testid="text-bag-demo-total">{formatPrice(demoTotal)}</span></div>}
             <div className="mt-4 flex gap-3 rounded-2xl bg-secondary p-4 text-sm leading-relaxed text-foreground/80" role="note">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <p>الطلب والدفع عبر الإنترنت غير متاحين بعد. الحقيبة محفوظة على جهازكِ. مجموع الأكواب والعطور بالشيكل. باقي الأسعار توضيحية بلا عملة وتُجمع وحدها.</p>
+              <p>الطلب والدفع عبر الإنترنت غير متاحين بعد. الحقيبة محفوظة على جهازكِ. أسعار منتجات المحل بالشيكل. الأسعار التوضيحية بلا عملة وتُجمع وحدها.</p>
             </div>
             {bagItems.length > 0 && <button onClick={clear} className="mt-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-destructive" data-testid="button-clear-bag"><X className="h-3.5 w-3.5" /> إفراغ الحقيبة</button>}
           </div>
