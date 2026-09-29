@@ -111,8 +111,7 @@ export default function Home() {
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-3" data-testid="link-home" aria-label="لافندر آند مور — العودة للأعلى">
             <img src={LOGO} alt="" className="h-12 w-12 rounded-full object-cover ring-1 ring-primary/20" />
             <span className="leading-tight text-right">
-              <span className="block font-ruqaa text-xl text-primary">لافندر آند مور</span>
-              <span className="block font-latin text-xs text-muted-foreground" dir="ltr">Lavender &amp; More</span>
+              <span className="block font-latin text-xl text-primary" dir="ltr">Lavender &amp; More</span>
             </span>
           </button>
           <nav className="hidden lg:flex items-center gap-8 text-sm" aria-label="التنقل الرئيسي">
@@ -179,8 +178,8 @@ export default function Home() {
             </div>
           </div>
           <div className="rise relative mx-auto w-full max-w-lg" style={{ animationDelay: "350ms" }}>
-            <div className="overflow-hidden rounded-t-[999px] rounded-b-[40px] shadow-[0_40px_80px_-40px_hsl(289_32%_30%/0.6)]">
-              <img src={`${base}images/hero.jpg`} alt="شريط وردي وأعواد خزامى وزجاجات عناية على قماش كتاني" className="aspect-[4/5] w-full object-cover" />
+            <div className="overflow-hidden rounded-full shadow-[0_40px_80px_-40px_hsl(289_32%_30%/0.6)]">
+              <img src={LOGO} alt="Lavender & More — شعار المحل" className="aspect-square w-full object-contain" />
             </div>
             <Sprig className="sway absolute -bottom-6 -right-6 h-40 w-14" />
             <div className="absolute -bottom-8 left-4 rounded-2xl bg-card/95 px-5 py-4 shadow-lg backdrop-blur">
