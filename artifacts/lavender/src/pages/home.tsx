@@ -1,0 +1,369 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Heart, Search, ShoppingBag, Menu, X, Plus, Minus, Trash2, Info, ArrowLeft } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { products, categories, formatPrice, type Category, type Product } from "@/data/products";
+import { useStore } from "@/hooks/use-store";
+
+const base = import.meta.env.BASE_URL;
+const LOGO = `${base}images/logo.jpeg`;
+
+function useReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add("in")), { threshold: 0.12 });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  });
+}
+
+function Sprig({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 40 120" className={className} aria-hidden fill="none">
+      <path d="M20 118 C20 80 21 50 20 8" stroke="hsl(95 18% 45%)" strokeWidth="1.4" />
+      {Array.from({ length: 9 }).map((_, i) => (
+        <g key={i}>
+          <ellipse cx={15} cy={12 + i * 8} rx="4" ry="2.6" transform={`rotate(-35 15 ${12 + i * 8})`} fill="hsl(275 38% 62%)" opacity={0.9 - i * 0.05} />
+          <ellipse cx={25} cy={16 + i * 8} rx="4" ry="2.6" transform={`rotate(35 25 ${16 + i * 8})`} fill="hsl(280 35% 55%)" opacity={0.85 - i * 0.05} />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function Divider() {
+  return (
+    <div className="flex items-center justify-center gap-3 text-primary/60" aria-hidden>
+      <span className="h-px w-16 bg-current" />
+      <Heart className="h-3 w-3 fill-current" />
+      <span className="h-px w-16 bg-current" />
+    </div>
+  );
+}
+
+function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav: boolean; onFav: () => void; onOpen: () => void; onAdd: () => void; index: number }) {
+  const cat = categories.find((c) => c.id === p.category)?.label;
+  return (
+    <article className="group reveal" style={{ transitionDelay: `${(index % 4) * 80}ms` }} data-testid={`card-product-${p.id}`}>
+      <div className="relative overflow-hidden rounded-t-[999px] rounded-b-[28px] bg-secondary shadow-[0_20px_40px_-28px_hsl(289_32%_30%/0.5)]">
+        <button onClick={onOpen} className="block w-full aspect-[4/5] focus-visible:outline-2 focus-visible:outline-primary" aria-label={`عرض تفاصيل ${p.name}`} data-testid={`button-open-${p.id}`}>
+          <img src={p.image} alt={p.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]" />
+          <span className="absolute inset-0 bg-gradient-to-t from-[hsl(289_32%_20%/0.35)] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        </button>
+        <button onClick={onFav} aria-pressed={fav} aria-label={fav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"} className="absolute top-[18%] left-4 grid h-10 w-10 place-items-center rounded-full bg-card/85 backdrop-blur transition-transform hover:scale-110 active:scale-95" data-testid={`button-fav-${p.id}`}>
+          <Heart className={`h-4 w-4 transition-colors ${fav ? "fill-primary text-primary" : "text-primary/70"}`} />
+        </button>
+        <button onClick={onAdd} className="absolute bottom-4 inset-x-4 rounded-full bg-card/90 py-2.5 text-sm font-medium text-primary backdrop-blur translate-y-3 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100 hover:bg-primary hover:text-primary-foreground max-md:translate-y-0 max-md:opacity-100" data-testid={`button-add-${p.id}`}>
+          أضيفي إلى الحقيبة
+        </button>
+      </div>
+      <div className="px-2 pt-4 text-center">
+        <p className="text-xs tracking-wide text-muted-foreground">{cat}</p>
+        <h3 className="font-amiri text-xl text-foreground mt-1">{p.name}</h3>
+        <p className="mt-1 text-sm text-primary" data-testid={`text-price-${p.id}`}>{formatPrice(p.price)} <span className="text-xs text-muted-foreground">سعر توضيحي</span></p>
+      </div>
+    </article>
+  );
+}
+
+export default function Home() {
+  useReveal();
+  const { favs, bag, toggleFav, add, setQty, clear } = useStore();
+  const [cat, setCat] = useState<Category | "all">("all");
+  const [q, setQ] = useState("");
+  const [onlyFavs, setOnlyFavs] = useState(false);
+  const [open, setOpen] = useState<Product | null>(null);
+  const [bagOpen, setBagOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [pulse, setPulse] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const f = () => setScrolled(window.scrollY > 30);
+    f();
+    window.addEventListener("scroll", f, { passive: true });
+    return () => window.removeEventListener("scroll", f);
+  }, []);
+
+  const list = useMemo(() => {
+    const t = q.trim();
+    return products.filter((p) => (cat === "all" || p.category === cat) && (!onlyFavs || favs.includes(p.id)) && (!t || p.name.includes(t) || p.short.includes(t) || p.description.includes(t)));
+  }, [cat, q, onlyFavs, favs]);
+
+  const bagItems = Object.entries(bag).map(([id, n]) => ({ p: products.find((x) => x.id === id), n })).filter((x): x is { p: Product; n: number } => !!x.p);
+  const count = bagItems.reduce((s, x) => s + x.n, 0);
+  const total = bagItems.reduce((s, x) => s + x.n * x.p.price, 0);
+
+  const addToBag = (id: string, n = 1) => { add(id, n); setPulse(true); setTimeout(() => setPulse(false), 600); };
+  const goShop = (c?: Category | "all") => { if (c) setCat(c); setOnlyFavs(false); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); };
+  const nav = [
+    { label: "المتجر", act: () => goShop("all") },
+    { label: "مستحضرات التجميل", act: () => goShop("cosmetics") },
+    { label: "الهدايا", act: () => goShop("gifts") },
+    { label: "حكايتنا", act: () => document.getElementById("story")?.scrollIntoView({ behavior: "smooth" }) },
+  ];
+
+  return (
+    <div className="min-h-[100dvh] overflow-x-hidden">
+      {/* Header */}
+      <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${scrolled ? "bg-background/85 backdrop-blur-md shadow-[0_1px_0_hsl(var(--border))]" : "bg-transparent"}`}>
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
+          <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-3" data-testid="link-home" aria-label="لافندر آند مور — العودة للأعلى">
+            <img src={LOGO} alt="" className="h-12 w-12 rounded-full object-cover ring-1 ring-primary/20" />
+            <span className="leading-tight text-right">
+              <span className="block font-ruqaa text-xl text-primary">لافندر آند مور</span>
+              <span className="block font-latin text-xs text-muted-foreground" dir="ltr">Lavender &amp; More</span>
+            </span>
+          </button>
+          <nav className="hidden lg:flex items-center gap-8 text-sm" aria-label="التنقل الرئيسي">
+            {nav.map((n) => (
+              <button key={n.label} onClick={n.act} className="relative py-1 text-foreground/80 hover:text-primary after:absolute after:bottom-0 after:right-0 after:h-px after:w-0 after:bg-primary after:transition-all hover:after:w-full">{n.label}</button>
+            ))}
+          </nav>
+          <div className="flex items-center gap-1">
+            <button onClick={() => { goShop(); setTimeout(() => searchRef.current?.focus(), 500); }} className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary" aria-label="بحث" data-testid="button-search-open"><Search className="h-5 w-5 text-primary" /></button>
+            <button onClick={() => { setOnlyFavs(true); setCat("all"); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); }} className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-secondary" aria-label={`المفضلة (${favs.length})`} data-testid="button-favs">
+              <Heart className="h-5 w-5 text-primary" />
+              {favs.length > 0 && <span className="absolute top-1 left-1 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 text-[10px] text-primary">{favs.length}</span>}
+            </button>
+            <button onClick={() => setBagOpen(true)} className={`relative grid h-10 w-10 place-items-center rounded-full hover:bg-secondary transition-transform ${pulse ? "scale-125" : ""}`} aria-label={`الحقيبة (${count})`} data-testid="button-bag">
+              <ShoppingBag className="h-5 w-5 text-primary" />
+              {count > 0 && <span className="absolute top-1 left-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] text-primary-foreground" data-testid="text-bag-count">{count}</span>}
+            </button>
+            <button onClick={() => setMenuOpen(true)} className="lg:hidden grid h-10 w-10 place-items-center rounded-full hover:bg-secondary" aria-label="فتح القائمة" data-testid="button-menu"><Menu className="h-5 w-5 text-primary" /></button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile menu */}
+      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+        <SheetContent side="right" className="bg-background border-primary/10 w-[85vw] max-w-sm" dir="rtl">
+          <SheetTitle className="font-ruqaa text-2xl text-primary text-right">القائمة</SheetTitle>
+          <SheetDescription className="text-right">تنقّلي بين أقسام المتجر</SheetDescription>
+          <nav className="mt-8 flex flex-col gap-2" aria-label="قائمة الجوال">
+            {nav.map((n) => (
+              <button key={n.label} onClick={() => { setMenuOpen(false); setTimeout(n.act, 250); }} className="rounded-2xl px-4 py-4 text-right font-amiri text-2xl hover:bg-secondary">{n.label}</button>
+            ))}
+          </nav>
+          <img src={LOGO} alt="" className="mx-auto mt-10 h-32 w-32 rounded-full opacity-80" />
+        </SheetContent>
+      </Sheet>
+
+      {/* Hero */}
+      <section className="relative min-h-[100dvh] pt-24 pb-16">
+        <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-accent/50 blur-3xl" aria-hidden />
+        <div className="absolute bottom-0 right-0 h-[380px] w-[380px] rounded-full bg-[hsl(340_50%_90%)] blur-3xl" aria-hidden />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 lg:grid-cols-[1.05fr_1fr]">
+          <div className="text-center lg:text-right">
+            <p className="rise font-latin text-lg text-primary/70" dir="ltr" style={{ animationDelay: "100ms" }}>Once a dream, now a reality.</p>
+            <h1 className="rise mt-4 font-ruqaa text-6xl leading-[1.25] text-primary sm:text-7xl lg:text-8xl" style={{ animationDelay: "250ms" }}>كان حلماً<br /><span className="text-[hsl(280_35%_58%)]">وأصبح حقيقة</span></h1>
+            <p className="rise mx-auto mt-6 max-w-md text-lg leading-loose text-foreground/75 lg:mx-0" style={{ animationDelay: "450ms" }}>
+              متجر صغير لمستحضرات التجميل، ومعها ما يكمل الهدية: باقة ورد، شمعة، وكوب لقهوة الصباح. كل قطعة نختارها كأنها لكِ.
+            </p>
+            <div className="rise mt-10 flex flex-wrap justify-center gap-3 lg:justify-start" style={{ animationDelay: "600ms" }}>
+              <button onClick={() => goShop("cosmetics")} className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-primary-foreground shadow-[0_14px_30px_-12px_hsl(289_32%_36%/0.6)] transition-transform hover:-translate-y-0.5" data-testid="button-hero-shop">
+                تسوّقي الجمال <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              </button>
+              <button onClick={() => goShop("gifts")} className="rounded-full border border-primary/30 px-8 py-4 text-primary transition-colors hover:bg-secondary" data-testid="button-hero-gifts">اختاري هدية</button>
+            </div>
+          </div>
+          <div className="rise relative mx-auto w-full max-w-lg" style={{ animationDelay: "350ms" }}>
+            <div className="overflow-hidden rounded-t-[999px] rounded-b-[40px] shadow-[0_40px_80px_-40px_hsl(289_32%_30%/0.6)]">
+              <img src={`${base}images/hero.jpg`} alt="شريط وردي وأعواد خزامى وزجاجات عناية على قماش كتاني" className="aspect-[4/5] w-full object-cover" />
+            </div>
+            <Sprig className="sway absolute -bottom-6 -right-6 h-40 w-14" />
+            <div className="absolute -bottom-8 left-4 rounded-2xl bg-card/95 px-5 py-4 shadow-lg backdrop-blur">
+              <p className="font-amiri text-lg text-primary">مغلّفة بشريط</p>
+              <p className="text-xs text-muted-foreground">كما لو كانت هدية لكِ</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Category ribbon */}
+      <section className="border-y border-primary/10 bg-card/60" aria-label="الأقسام">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 md:grid-cols-5">
+          {categories.slice(1).map((c, i) => (
+            <button key={c.id} onClick={() => goShop(c.id)} className={`group px-4 py-8 text-center transition-colors hover:bg-secondary/60 ${i > 0 ? "md:border-r border-primary/10" : ""}`} data-testid={`button-category-${c.id}`}>
+              <span className="block font-amiri text-2xl text-primary transition-transform group-hover:-translate-y-1">{c.label}</span>
+              <span className="mt-1 block text-xs text-muted-foreground">{c.hint}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Story */}
+      <section id="story" className="mx-auto max-w-6xl px-5 py-28">
+        <div className="grid items-center gap-16 md:grid-cols-2">
+          <div className="reveal relative mx-auto">
+            <div className="absolute inset-0 -m-6 rounded-full border border-primary/15" aria-hidden />
+            <img src={LOGO} alt="شعار لافندر آند مور: أعواد خزامى مربوطة بشريط" className="h-72 w-72 rounded-full object-cover shadow-[0_30px_60px_-30px_hsl(289_32%_30%/0.5)] sm:h-96 sm:w-96" />
+          </div>
+          <div className="reveal text-center md:text-right">
+            <p className="text-sm tracking-widest text-primary/60">حكايتنا</p>
+            <h2 className="mt-3 font-ruqaa text-5xl leading-snug text-primary">حزمة خزامى،<br />وشريط، وفكرة</h2>
+            <p className="mt-6 text-lg leading-loose text-foreground/75">
+              بدأ لافندر آند مور كحلم صغير: مكان يجمع ما تحبينه لنفسك وما تهدينه لمن تحبين. في المنتصف مستحضرات التجميل، وحولها تفاصيل تكمل اللحظة: ورد، وشموع، وأكواب.
+            </p>
+            <div className="mt-8"><Divider /></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Shop */}
+      <section id="shop" className="scroll-mt-20 bg-gradient-to-b from-transparent via-secondary/40 to-transparent py-24">
+        <div className="mx-auto max-w-7xl px-5">
+          <div className="text-center reveal">
+            <h2 className="font-ruqaa text-5xl text-primary">{onlyFavs ? "مفضّلاتكِ" : "الرفوف"}</h2>
+            <p className="mt-3 text-muted-foreground">المنتجات والأسعار المعروضة توضيحية لأغراض العرض فقط.</p>
+          </div>
+          <div className="mt-10 flex flex-col items-center gap-5">
+            <label className="relative w-full max-w-md">
+              <span className="sr-only">ابحثي عن منتج</span>
+              <Search className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/60" />
+              <input ref={searchRef} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحثي: سيروم، شمعة، باقة..." className="w-full rounded-full border border-input bg-card py-3.5 pr-11 pl-4 outline-none transition-shadow focus:ring-2 focus:ring-ring/40" data-testid="input-search" />
+            </label>
+            <div className="flex flex-wrap justify-center gap-2" role="group" aria-label="تصفية حسب القسم">
+              {categories.map((c) => (
+                <button key={c.id} onClick={() => setCat(c.id)} aria-pressed={cat === c.id} className={`rounded-full px-5 py-2 text-sm transition-all ${cat === c.id ? "bg-primary text-primary-foreground shadow-md" : "bg-card text-foreground/75 hover:bg-accent/60"}`} data-testid={`filter-${c.id}`}>{c.label}</button>
+              ))}
+              <button onClick={() => setOnlyFavs((v) => !v)} aria-pressed={onlyFavs} className={`inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm transition-all ${onlyFavs ? "bg-accent text-primary" : "bg-card text-foreground/75 hover:bg-accent/60"}`} data-testid="filter-favs">
+                <Heart className={`h-3.5 w-3.5 ${onlyFavs ? "fill-primary" : ""}`} /> المفضلة
+              </button>
+            </div>
+          </div>
+
+          {list.length === 0 ? (
+            <div className="mx-auto mt-16 max-w-sm text-center" data-testid="status-empty">
+              <Sprig className="mx-auto h-28 w-10 opacity-70" />
+              <p className="mt-4 font-amiri text-2xl text-primary">{onlyFavs && favs.length === 0 ? "لم تختاري مفضّلات بعد" : "لا شيء هنا بعد"}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{onlyFavs && favs.length === 0 ? "اضغطي على القلب فوق أي منتج ليظهر هنا." : "جرّبي كلمة أخرى أو قسماً مختلفاً."}</p>
+              <button onClick={() => { setQ(""); setCat("all"); setOnlyFavs(false); }} className="mt-6 rounded-full border border-primary/30 px-6 py-2.5 text-sm text-primary hover:bg-secondary" data-testid="button-reset-filters">عرض كل المنتجات</button>
+            </div>
+          ) : (
+            <div className="mt-14 grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
+              {list.map((p, i) => (
+                <ProductCard key={p.id} index={i} p={p} fav={favs.includes(p.id)} onFav={() => toggleFav(p.id)} onOpen={() => setOpen(p)} onAdd={() => addToBag(p.id)} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Gift editorial */}
+      <section className="mx-auto max-w-7xl px-5 py-24">
+        <div className="reveal grid overflow-hidden rounded-[40px] bg-primary text-primary-foreground md:grid-cols-2">
+          <img src={`${base}images/giftbox.jpg`} alt="صندوق هدية مفتوح بورق حريري وشمعة وشريط" className="h-full min-h-[320px] w-full object-cover" />
+          <div className="flex flex-col justify-center p-10 md:p-16">
+            <p className="font-latin text-lg opacity-70" dir="ltr">&amp; more</p>
+            <h2 className="mt-2 font-ruqaa text-5xl leading-snug">هدية تُفتح ببطء</h2>
+            <p className="mt-5 leading-loose opacity-85">ورق حريري، شريط ليلكي، وبطاقة بخطّ اليد. اجمعي قطعة جمال مع شمعة أو باقة، ودعي التفاصيل تتكلم عنكِ.</p>
+            <button onClick={() => { const b = products.find((p) => p.id === "box-dream"); if (b) setOpen(b); }} className="mt-8 self-start rounded-full bg-primary-foreground px-7 py-3.5 text-primary transition-transform hover:-translate-y-0.5" data-testid="button-gift-box">شاهدي صندوق «كان حلماً»</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Rituals */}
+      <section className="mx-auto max-w-6xl px-5 pb-28">
+        <div className="text-center reveal"><h2 className="font-ruqaa text-4xl text-primary">كيف نفكّر في كل قطعة</h2><div className="mt-5"><Divider /></div></div>
+        <ol className="mt-14 grid gap-10 md:grid-cols-[1.2fr_1fr_1fr]">
+          {[
+            ["١", "نختار", "قطعاً قليلة نحبها بدل رفوف مزدحمة."],
+            ["٢", "نغلّف", "بورق ناعم وشريط، كأنها تُهدى في كل مرة."],
+            ["٣", "نكمل", "بوردة أو شمعة أو كوب، لمن تريد أكثر."],
+          ].map(([n, t, d], i) => (
+            <li key={n} className="reveal border-t border-primary/20 pt-6" style={{ transitionDelay: `${i * 120}ms` }}>
+              <span className="font-amiri text-5xl text-accent-foreground/30">{n}</span>
+              <h3 className="mt-2 font-amiri text-2xl text-primary">{t}</h3>
+              <p className="mt-2 text-foreground/70 leading-relaxed">{d}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-primary/10 bg-card/70 py-14">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-5 text-center">
+          <img src={LOGO} alt="" className="h-20 w-20 rounded-full" />
+          <p className="font-ruqaa text-2xl text-primary">لافندر آند مور</p>
+          <p className="font-latin text-muted-foreground" dir="ltr">Once a dream, now a reality.</p>
+          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">جميع المنتجات والأسعار في هذا الموقع توضيحية. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
+        </div>
+      </footer>
+
+      {/* Product dialog */}
+      <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
+        <DialogContent className="max-w-3xl overflow-hidden rounded-[32px] border-primary/10 bg-background p-0 [&>button]:left-4 [&>button]:right-auto" dir="rtl">
+          {open && (
+            <div className="grid md:grid-cols-2">
+              <img src={open.image} alt={open.name} className="h-64 w-full object-cover md:h-full" />
+              <div className="p-8 text-right">
+                <p className="text-xs text-muted-foreground">{categories.find((c) => c.id === open.category)?.label}</p>
+                <DialogTitle className="mt-1 font-amiri text-3xl font-normal text-primary">{open.name}</DialogTitle>
+                <DialogDescription className="mt-4 leading-loose text-foreground/75">{open.description}</DialogDescription>
+                <ul className="mt-5 flex flex-wrap gap-2">{open.notes.map((n) => <li key={n} className="rounded-full bg-secondary px-3 py-1 text-xs text-primary">{n}</li>)}</ul>
+                <p className="mt-6 text-2xl text-primary">{formatPrice(open.price)} <span className="text-xs text-muted-foreground">سعر توضيحي</span></p>
+                <div className="mt-6 flex gap-3">
+                  <button onClick={() => addToBag(open.id)} className="flex-1 rounded-full bg-primary py-3.5 text-primary-foreground transition-transform hover:-translate-y-0.5" data-testid="button-dialog-add">
+                    {bag[open.id] ? `في الحقيبة (${bag[open.id]}) — أضيفي واحدة` : "أضيفي إلى الحقيبة"}
+                  </button>
+                  <button onClick={() => toggleFav(open.id)} aria-pressed={favs.includes(open.id)} aria-label="المفضلة" className="grid h-12 w-12 place-items-center rounded-full border border-primary/30 hover:bg-secondary" data-testid="button-dialog-fav">
+                    <Heart className={`h-5 w-5 ${favs.includes(open.id) ? "fill-primary text-primary" : "text-primary"}`} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Bag */}
+      <Sheet open={bagOpen} onOpenChange={setBagOpen}>
+        <SheetContent side="left" className="flex w-[92vw] max-w-md flex-col bg-background border-primary/10 p-0 [&>button]:left-4 [&>button]:right-auto" dir="rtl">
+          <div className="border-b border-primary/10 p-6 text-right">
+            <SheetTitle className="font-ruqaa text-3xl text-primary">حقيبتكِ</SheetTitle>
+            <SheetDescription>{count ? `${count.toLocaleString("ar-EG")} قطعة` : "فارغة حالياً"}</SheetDescription>
+          </div>
+          <div className="flex-1 overflow-y-auto p-6">
+            {bagItems.length === 0 ? (
+              <div className="py-16 text-center">
+                <ShoppingBag className="mx-auto h-10 w-10 text-primary/40" />
+                <p className="mt-4 font-amiri text-xl text-primary">الحقيبة تنتظر أول قطعة</p>
+                <button onClick={() => { setBagOpen(false); goShop("all"); }} className="mt-6 rounded-full border border-primary/30 px-6 py-2.5 text-sm text-primary hover:bg-secondary" data-testid="button-bag-browse">تصفّحي المتجر</button>
+              </div>
+            ) : (
+              <ul className="space-y-5">
+                {bagItems.map(({ p, n }) => (
+                  <li key={p.id} className="flex gap-4" data-testid={`row-bag-${p.id}`}>
+                    <img src={p.image} alt="" className="h-24 w-20 rounded-2xl object-cover" />
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-amiri text-lg leading-tight">{p.name}</p>
+                        <button onClick={() => setQty(p.id, 0)} aria-label={`إزالة ${p.name}`} className="text-muted-foreground hover:text-destructive" data-testid={`button-remove-${p.id}`}><Trash2 className="h-4 w-4" /></button>
+                      </div>
+                      <p className="text-sm text-primary">{formatPrice(p.price * n)}</p>
+                      <div className="mt-2 inline-flex items-center rounded-full border border-primary/20">
+                        <button onClick={() => setQty(p.id, n + 1)} aria-label="زيادة الكمية" className="grid h-8 w-8 place-items-center hover:text-primary" data-testid={`button-inc-${p.id}`}><Plus className="h-3.5 w-3.5" /></button>
+                        <span className="w-8 text-center text-sm" aria-live="polite">{n.toLocaleString("ar-EG")}</span>
+                        <button onClick={() => setQty(p.id, n - 1)} aria-label="إنقاص الكمية" className="grid h-8 w-8 place-items-center hover:text-primary" data-testid={`button-dec-${p.id}`}><Minus className="h-3.5 w-3.5" /></button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div className="border-t border-primary/10 bg-card/70 p-6">
+            <div className="flex items-center justify-between font-amiri text-xl"><span>المجموع التوضيحي</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(total)}</span></div>
+            <div className="mt-4 flex gap-3 rounded-2xl bg-secondary p-4 text-sm leading-relaxed text-foreground/80" role="note">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <p>الطلب والدفع عبر الإنترنت غير متاحين بعد. الحقيبة محفوظة على جهازكِ لتعودي إليها لاحقاً، والأسعار توضيحية.</p>
+            </div>
+            {bagItems.length > 0 && <button onClick={clear} className="mt-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-destructive" data-testid="button-clear-bag"><X className="h-3.5 w-3.5" /> إفراغ الحقيبة</button>}
+          </div>
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+}

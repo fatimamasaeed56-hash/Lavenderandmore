@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Lavender & More"
+description = "Arabic RTL cosmetics and gifts boutique inspired by the uploaded lavender brand logo. Product browsing, category filters, favorites and a local shopping bag, with clearly labeled sample products and no live checkout."
+version = "1.0.0"
+id = "artifacts/lavender"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18376
+
+[services.development]
+run = "pnpm --filter @workspace/lavender run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lavender", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/lavender/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18376"
+BASE_PATH = "/"
