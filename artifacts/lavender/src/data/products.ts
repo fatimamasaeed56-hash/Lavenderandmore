@@ -1,4 +1,4 @@
-export type Category = "cups" | "perfumes" | "beauty" | "cosmetics" | "bodycare" | "flowers";
+export type Category = "cups" | "perfumes" | "beauty" | "cosmetics" | "bodycare" | "flowers" | "printing";
 
 export interface Product {
   id: string;
@@ -23,6 +23,7 @@ export const categories: { id: Category | "all"; label: string; hint: string; pa
   { id: "cosmetics", label: "كوزمتيكس", hint: "لمسات الجمال", parent: "beauty" },
   { id: "bodycare", label: "عناية بالجسم", hint: "لروتين العناية", parent: "beauty" },
   { id: "flowers", label: "الورد", hint: "باقات مربوطة باليد" },
+  { id: "printing", label: "الطباعة", hint: "coming soon" },
 ];
 
 export const mainCategories = categories.filter((c) => c.id !== "all" && !c.parent);

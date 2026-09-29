@@ -193,7 +193,7 @@ export default function Home() {
 
       {/* Category ribbon */}
       <section className="border-y border-primary/10 bg-card/60" aria-label="الأقسام">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 md:grid-cols-4">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 md:grid-cols-5">
           {mainCategories.map((c, i) => (
             <button key={c.id} onClick={() => goShop(c.id)} className={`group px-4 py-8 text-center transition-colors hover:bg-secondary/60 ${i > 0 ? "md:border-r border-primary/10" : ""}`} data-testid={`button-category-${c.id}`}>
               <span className="block font-amiri text-2xl text-primary transition-transform group-hover:-translate-y-1">{c.label}</span>
@@ -252,7 +252,12 @@ export default function Home() {
             )}
           </div>
 
-          {list.length === 0 ? (
+          {cat === "printing" ? (
+            <div className="mx-auto mt-16 max-w-sm text-center" data-testid="status-printing-coming-soon">
+              <h3 className="font-amiri text-3xl text-primary">الطباعة</h3>
+              <p dir="ltr" className="mt-4 font-latin text-3xl text-primary">coming soon</p>
+            </div>
+          ) : list.length === 0 ? (
             <div className="mx-auto mt-16 max-w-sm text-center" data-testid="status-empty">
               <Sprig className="mx-auto h-28 w-10 opacity-70" />
               <p className="mt-4 font-amiri text-2xl text-primary">{onlyFavs && favs.length === 0 ? "لم تختاري مفضّلات بعد" : cat === "flowers" && !q.trim() && !onlyFavs ? "لا توجد منتجات ورد بعد" : "لا توجد منتجات تطابق اختياركِ"}</p>
