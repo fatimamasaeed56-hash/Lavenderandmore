@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { products, categories, mainCategories, beautyCategories, matchesCategory, formatPrice, formatProductPrice, type Category, type Product } from "@/data/products";
 import { useStore } from "@/hooks/use-store";
+import { CategoryFeedback } from "@/components/category-feedback";
 
 const base = import.meta.env.BASE_URL;
 const LOGO = `${base}images/logo.jpeg`;
@@ -70,7 +71,10 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
 export default function Home() {
   useReveal();
   const { favs, bag, toggleFav, add, setQty, clear } = useStore();
-  const [cat, setCat] = useState<Category | "all">("all");
+  const [cat, setCat] = useState<Category | "all">(() => {
+    const saved = sessionStorage.getItem("lm-feedback-category");
+    return categories.some((c) => c.id === saved) ? saved as Category : "all";
+  });
   const [q, setQ] = useState("");
   const [onlyFavs, setOnlyFavs] = useState(false);
   const [open, setOpen] = useState<Product | null>(null);
@@ -79,6 +83,13 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [pulse, setPulse] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("lm-feedback-category")) {
+      sessionStorage.removeItem("lm-feedback-category");
+      document.getElementById("feedback-heading")?.scrollIntoView({ block: "center" });
+    }
+  }, []);
 
   useEffect(() => {
     const f = () => setScrolled(window.scrollY > 30);
@@ -271,6 +282,7 @@ export default function Home() {
               ))}
             </div>
           )}
+          <CategoryFeedback key={cat} category={cat} />
         </div>
       </section>
 
