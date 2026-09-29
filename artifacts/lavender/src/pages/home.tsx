@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Heart, Search, ShoppingBag, Menu, X, Plus, Minus, Trash2, Info, ArrowLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { products, categories, formatPrice, type Category, type Product } from "@/data/products";
+import { products, categories, mainCategories, beautyCategories, matchesCategory, formatPrice, type Category, type Product } from "@/data/products";
 import { useStore } from "@/hooks/use-store";
 
 const base = import.meta.env.BASE_URL;
@@ -88,7 +88,7 @@ export default function Home() {
 
   const list = useMemo(() => {
     const t = q.trim();
-    return products.filter((p) => (cat === "all" || p.category === cat) && (!onlyFavs || favs.includes(p.id)) && (!t || p.name.includes(t) || p.short.includes(t) || p.description.includes(t)));
+    return products.filter((p) => matchesCategory(p, cat) && (!onlyFavs || favs.includes(p.id)) && (!t || p.name.includes(t) || p.short.includes(t) || p.description.includes(t)));
   }, [cat, q, onlyFavs, favs]);
 
   const bagItems = Object.entries(bag).map(([id, n]) => ({ p: products.find((x) => x.id === id), n })).filter((x): x is { p: Product; n: number } => !!x.p);
@@ -96,11 +96,10 @@ export default function Home() {
   const total = bagItems.reduce((s, x) => s + x.n * x.p.price, 0);
 
   const addToBag = (id: string, n = 1) => { add(id, n); setPulse(true); setTimeout(() => setPulse(false), 600); };
-  const goShop = (c?: Category | "all") => { if (c) setCat(c); setOnlyFavs(false); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); };
-  const nav = [
+  const goShop = (c?: Category | "all") => { if (c) { setCat(c); setQ(""); } setOnlyFavs(false); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); };
+  const nav: { label: string; act: () => void; children?: typeof beautyCategories }[] = [
     { label: "المتجر", act: () => goShop("all") },
-    { label: "مستحضرات التجميل", act: () => goShop("cosmetics") },
-    { label: "الهدايا", act: () => goShop("gifts") },
+    ...mainCategories.map((c) => ({ label: c.label, act: () => goShop(c.id), children: c.id === "beauty" ? beautyCategories : undefined })),
     { label: "حكايتنا", act: () => document.getElementById("story")?.scrollIntoView({ behavior: "smooth" }) },
   ];
 
@@ -118,7 +117,15 @@ export default function Home() {
           </button>
           <nav className="hidden lg:flex items-center gap-8 text-sm" aria-label="التنقل الرئيسي">
             {nav.map((n) => (
-              <button key={n.label} onClick={n.act} className="relative py-1 text-foreground/80 hover:text-primary after:absolute after:bottom-0 after:right-0 after:h-px after:w-0 after:bg-primary after:transition-all hover:after:w-full">{n.label}</button>
+              n.children ? (
+                <details key={n.label} className="relative">
+                  <summary className="cursor-pointer py-1 text-foreground/80 hover:text-primary">{n.label}</summary>
+                  <div className="absolute right-0 mt-3 w-48 rounded-2xl border border-primary/15 bg-background p-2 shadow-lg">
+                    <button onClick={(e) => { n.act(); e.currentTarget.closest("details")?.removeAttribute("open"); }} className="w-full rounded-xl px-3 py-3 text-right hover:bg-secondary">كل منتجات التجميل</button>
+                    {n.children.map((c) => <button key={c.id} onClick={(e) => { goShop(c.id); e.currentTarget.closest("details")?.removeAttribute("open"); }} className="w-full rounded-xl px-3 py-3 text-right hover:bg-secondary">{c.label}</button>)}
+                  </div>
+                </details>
+              ) : <button key={n.label} onClick={n.act} className="relative py-1 text-foreground/80 hover:text-primary after:absolute after:bottom-0 after:right-0 after:h-px after:w-0 after:bg-primary after:transition-all hover:after:w-full">{n.label}</button>
             ))}
           </nav>
           <div className="flex items-center gap-1">
@@ -143,7 +150,10 @@ export default function Home() {
           <SheetDescription className="text-right">تنقّلي بين أقسام المتجر</SheetDescription>
           <nav className="mt-8 flex flex-col gap-2" aria-label="قائمة الجوال">
             {nav.map((n) => (
-              <button key={n.label} onClick={() => { setMenuOpen(false); setTimeout(n.act, 250); }} className="rounded-2xl px-4 py-4 text-right font-amiri text-2xl hover:bg-secondary">{n.label}</button>
+              <div key={n.label}>
+                <button onClick={() => { setMenuOpen(false); setTimeout(n.act, 250); }} className="w-full rounded-2xl px-4 py-3 text-right font-amiri text-2xl hover:bg-secondary">{n.label}</button>
+                {n.children && <div className="mr-5 border-r border-primary/20 pr-3">{n.children.map((c) => <button key={c.id} onClick={() => { setMenuOpen(false); setTimeout(() => goShop(c.id), 250); }} className="block w-full rounded-xl px-3 py-2 text-right text-sm text-primary hover:bg-secondary">{c.label}</button>)}</div>}
+              </div>
             ))}
           </nav>
           <img src={LOGO} alt="" className="mx-auto mt-10 h-32 w-32 rounded-full opacity-80" />
@@ -159,13 +169,13 @@ export default function Home() {
             <p className="rise font-latin text-lg text-primary/70" dir="ltr" style={{ animationDelay: "100ms" }}>Once a dream, now a reality.</p>
             <h1 className="rise mt-4 font-ruqaa text-6xl leading-[1.25] text-primary sm:text-7xl lg:text-8xl" style={{ animationDelay: "250ms" }}>كان حلماً<br /><span className="text-[hsl(280_35%_58%)]">وأصبح حقيقة</span></h1>
             <p className="rise mx-auto mt-6 max-w-md text-lg leading-loose text-foreground/75 lg:mx-0" style={{ animationDelay: "450ms" }}>
-              متجر صغير لمستحضرات التجميل، ومعها ما يكمل الهدية: باقة ورد، شمعة، وكوب لقهوة الصباح. كل قطعة نختارها كأنها لكِ.
+              أكواب، عطور، منتجات تجميل والورد. من كوزمتيكس إلى عناية بالجسم، كل قطعة نختارها كأنها لكِ.
             </p>
             <div className="rise mt-10 flex flex-wrap justify-center gap-3 lg:justify-start" style={{ animationDelay: "600ms" }}>
-              <button onClick={() => goShop("cosmetics")} className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-primary-foreground shadow-[0_14px_30px_-12px_hsl(289_32%_36%/0.6)] transition-transform hover:-translate-y-0.5" data-testid="button-hero-shop">
+              <button onClick={() => goShop("beauty")} className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-primary-foreground shadow-[0_14px_30px_-12px_hsl(289_32%_36%/0.6)] transition-transform hover:-translate-y-0.5" data-testid="button-hero-shop">
                 تسوّقي الجمال <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
               </button>
-              <button onClick={() => goShop("gifts")} className="rounded-full border border-primary/30 px-8 py-4 text-primary transition-colors hover:bg-secondary" data-testid="button-hero-gifts">اختاري هدية</button>
+              <button onClick={() => goShop("all")} className="rounded-full border border-primary/30 px-8 py-4 text-primary transition-colors hover:bg-secondary" data-testid="button-hero-all">تصفّحي الأقسام</button>
             </div>
           </div>
           <div className="rise relative mx-auto w-full max-w-lg" style={{ animationDelay: "350ms" }}>
@@ -175,7 +185,7 @@ export default function Home() {
             <Sprig className="sway absolute -bottom-6 -right-6 h-40 w-14" />
             <div className="absolute -bottom-8 left-4 rounded-2xl bg-card/95 px-5 py-4 shadow-lg backdrop-blur">
               <p className="font-amiri text-lg text-primary">مغلّفة بشريط</p>
-              <p className="text-xs text-muted-foreground">كما لو كانت هدية لكِ</p>
+              <p className="text-xs text-muted-foreground">تفاصيل صغيرة لكِ</p>
             </div>
           </div>
         </div>
@@ -183,8 +193,8 @@ export default function Home() {
 
       {/* Category ribbon */}
       <section className="border-y border-primary/10 bg-card/60" aria-label="الأقسام">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 md:grid-cols-5">
-          {categories.slice(1).map((c, i) => (
+        <div className="mx-auto grid max-w-6xl grid-cols-2 md:grid-cols-4">
+          {mainCategories.map((c, i) => (
             <button key={c.id} onClick={() => goShop(c.id)} className={`group px-4 py-8 text-center transition-colors hover:bg-secondary/60 ${i > 0 ? "md:border-r border-primary/10" : ""}`} data-testid={`button-category-${c.id}`}>
               <span className="block font-amiri text-2xl text-primary transition-transform group-hover:-translate-y-1">{c.label}</span>
               <span className="mt-1 block text-xs text-muted-foreground">{c.hint}</span>
@@ -204,7 +214,7 @@ export default function Home() {
             <p className="text-sm tracking-widest text-primary/60">حكايتنا</p>
             <h2 className="mt-3 font-ruqaa text-5xl leading-snug text-primary">حزمة خزامى،<br />وشريط، وفكرة</h2>
             <p className="mt-6 text-lg leading-loose text-foreground/75">
-              بدأ لافندر آند مور كحلم صغير: مكان يجمع ما تحبينه لنفسك وما تهدينه لمن تحبين. في المنتصف مستحضرات التجميل، وحولها تفاصيل تكمل اللحظة: ورد، وشموع، وأكواب.
+              بدأ لافندر آند مور كحلم صغير: مكان يجمع ما تحبينه لنفسك. أكواب لقهوة الصباح، عطور، منتجات تجميل من كوزمتيكس وعناية بالجسم، والورد لتفاصيل يومكِ.
             </p>
             <div className="mt-8"><Divider /></div>
           </div>
@@ -222,23 +232,31 @@ export default function Home() {
             <label className="relative w-full max-w-md">
               <span className="sr-only">ابحثي عن منتج</span>
               <Search className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/60" />
-              <input ref={searchRef} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحثي: سيروم، شمعة، باقة..." className="w-full rounded-full border border-input bg-card py-3.5 pr-11 pl-4 outline-none transition-shadow focus:ring-2 focus:ring-ring/40" data-testid="input-search" />
+              <input ref={searchRef} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحثي: سيروم، كوب، باقة..." className="w-full rounded-full border border-input bg-card py-3.5 pr-11 pl-4 outline-none transition-shadow focus:ring-2 focus:ring-ring/40" data-testid="input-search" />
             </label>
             <div className="flex flex-wrap justify-center gap-2" role="group" aria-label="تصفية حسب القسم">
-              {categories.map((c) => (
+              {categories.filter((c) => !c.parent).map((c) => (
                 <button key={c.id} onClick={() => setCat(c.id)} aria-pressed={cat === c.id} className={`rounded-full px-5 py-2 text-sm transition-all ${cat === c.id ? "bg-primary text-primary-foreground shadow-md" : "bg-card text-foreground/75 hover:bg-accent/60"}`} data-testid={`filter-${c.id}`}>{c.label}</button>
               ))}
               <button onClick={() => setOnlyFavs((v) => !v)} aria-pressed={onlyFavs} className={`inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm transition-all ${onlyFavs ? "bg-accent text-primary" : "bg-card text-foreground/75 hover:bg-accent/60"}`} data-testid="filter-favs">
                 <Heart className={`h-3.5 w-3.5 ${onlyFavs ? "fill-primary" : ""}`} /> المفضلة
               </button>
             </div>
+            {(cat === "beauty" || beautyCategories.some((c) => c.id === cat)) && (
+              <div className="flex flex-wrap items-center justify-center gap-2 border-t border-primary/15 pt-4" role="group" aria-label="أقسام منتجات تجميل">
+                <span className="px-2 text-xs text-muted-foreground">منتجات تجميل</span>
+                {[{ id: "beauty" as const, label: "كل منتجات التجميل" }, ...beautyCategories].map((c) => (
+                  <button key={c.id} onClick={() => setCat(c.id)} aria-pressed={cat === c.id} className={`rounded-full border border-primary/20 px-4 py-2 text-sm ${cat === c.id ? "bg-primary text-primary-foreground" : "bg-card text-primary hover:bg-secondary"}`} data-testid={`subfilter-${c.id}`}>{c.label}</button>
+                ))}
+              </div>
+            )}
           </div>
 
           {list.length === 0 ? (
             <div className="mx-auto mt-16 max-w-sm text-center" data-testid="status-empty">
               <Sprig className="mx-auto h-28 w-10 opacity-70" />
-              <p className="mt-4 font-amiri text-2xl text-primary">{onlyFavs && favs.length === 0 ? "لم تختاري مفضّلات بعد" : "لا شيء هنا بعد"}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{onlyFavs && favs.length === 0 ? "اضغطي على القلب فوق أي منتج ليظهر هنا." : "جرّبي كلمة أخرى أو قسماً مختلفاً."}</p>
+              <p className="mt-4 font-amiri text-2xl text-primary">{cat === "perfumes" ? "لا توجد عطور معروضة بعد" : onlyFavs && favs.length === 0 ? "لم تختاري مفضّلات بعد" : "لا شيء هنا بعد"}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{cat === "perfumes" ? "بانتظار إضافة صور العطور وتفاصيلها. يمكنكِ تصفّح الأقسام الأخرى الآن." : onlyFavs && favs.length === 0 ? "اضغطي على القلب فوق أي منتج ليظهر هنا." : "جرّبي كلمة أخرى أو قسماً مختلفاً."}</p>
               <button onClick={() => { setQ(""); setCat("all"); setOnlyFavs(false); }} className="mt-6 rounded-full border border-primary/30 px-6 py-2.5 text-sm text-primary hover:bg-secondary" data-testid="button-reset-filters">عرض كل المنتجات</button>
             </div>
           ) : (
@@ -251,27 +269,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Gift editorial */}
-      <section className="mx-auto max-w-7xl px-5 py-24">
-        <div className="reveal grid overflow-hidden rounded-[40px] bg-primary text-primary-foreground md:grid-cols-2">
-          <img src={`${base}images/giftbox.jpg`} alt="صندوق هدية مفتوح بورق حريري وشمعة وشريط" className="h-full min-h-[320px] w-full object-cover" />
-          <div className="flex flex-col justify-center p-10 md:p-16">
-            <p className="font-latin text-lg opacity-70" dir="ltr">&amp; more</p>
-            <h2 className="mt-2 font-ruqaa text-5xl leading-snug">هدية تُفتح ببطء</h2>
-            <p className="mt-5 leading-loose opacity-85">ورق حريري، شريط ليلكي، وبطاقة بخطّ اليد. اجمعي قطعة جمال مع شمعة أو باقة، ودعي التفاصيل تتكلم عنكِ.</p>
-            <button onClick={() => { const b = products.find((p) => p.id === "box-dream"); if (b) setOpen(b); }} className="mt-8 self-start rounded-full bg-primary-foreground px-7 py-3.5 text-primary transition-transform hover:-translate-y-0.5" data-testid="button-gift-box">شاهدي صندوق «كان حلماً»</button>
-          </div>
-        </div>
-      </section>
-
       {/* Rituals */}
       <section className="mx-auto max-w-6xl px-5 pb-28">
         <div className="text-center reveal"><h2 className="font-ruqaa text-4xl text-primary">كيف نفكّر في كل قطعة</h2><div className="mt-5"><Divider /></div></div>
         <ol className="mt-14 grid gap-10 md:grid-cols-[1.2fr_1fr_1fr]">
           {[
             ["١", "نختار", "قطعاً قليلة نحبها بدل رفوف مزدحمة."],
-            ["٢", "نغلّف", "بورق ناعم وشريط، كأنها تُهدى في كل مرة."],
-            ["٣", "نكمل", "بوردة أو شمعة أو كوب، لمن تريد أكثر."],
+            ["٢", "نغلّف", "بورق ناعم وشريط، ونهتم بأصغر التفاصيل."],
+            ["٣", "نكمل", "بوردة أو كوب، لتفاصيل يومكِ الصغيرة."],
           ].map(([n, t, d], i) => (
             <li key={n} className="reveal border-t border-primary/20 pt-6" style={{ transitionDelay: `${i * 120}ms` }}>
               <span className="font-amiri text-5xl text-accent-foreground/30">{n}</span>
