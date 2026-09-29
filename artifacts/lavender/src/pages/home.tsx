@@ -312,7 +312,7 @@ export default function Home() {
       <footer className="border-t border-primary/10 bg-card/70 py-14">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-5 text-center">
           <img src={LOGO} alt="" className="h-20 w-20 rounded-full" />
-          <p className="font-ruqaa text-2xl text-primary">لافندر آند مور</p>
+          <p className="font-latin text-2xl text-primary" dir="ltr">Lavender &amp; More</p>
           <p className="font-latin text-muted-foreground" dir="ltr">Once a dream, now a reality.</p>
           <p className="max-w-md text-xs leading-relaxed text-muted-foreground">الأكواب والعطور ومستحضرات التجميل المضافة بصور المحل وأسعارها بالشيكل. الطلب والدفع عبر الإنترنت غير متاحين حالياً.</p>
         </div>
