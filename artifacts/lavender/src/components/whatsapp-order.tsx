@@ -2,17 +2,19 @@ import { useEffect, useState, type FormEvent } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { type Product } from "@/data/products";
 import { bagColors } from "@/hooks/use-store";
+import type { DeliveryLocation } from "@/components/delivery-location";
 
-export function WhatsAppOrder({ items }: { items: { id: string; p: Product; n: number }[] }) {
+export function WhatsAppOrder({ items, location }: { items: { id: string; p: Product; n: number }[]; location: DeliveryLocation }) {
   const [expanded, setExpanded] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(location.address);
   const [notes, setNotes] = useState("");
   const [link, setLink] = useState("");
   const [error, setError] = useState("");
   const signature = JSON.stringify(items.map(({ id, n, p }) => [id, n, p.price]));
-  useEffect(() => { setLink(""); }, [signature, name, phone, address, notes]);
+  useEffect(() => { setLink(""); }, [signature, name, phone, address, notes, location.mapUrl]);
+  useEffect(() => { setAddress(location.address); }, [location.address]);
 
   function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,6 +36,7 @@ export function WhatsAppOrder({ items }: { items: { id: string; p: Product; n: n
       `الاسم: ${name.trim()}`,
       `الهاتف: ${normalizedPhone}`,
       `عنوان التوصيل: ${address.trim()}`,
+      ...(location.mapUrl ? [`موقع التوصيل على الخريطة: ${location.mapUrl}`] : []),
       ...(notes.trim() ? [`ملاحظات: ${notes.trim()}`] : []),
       "يرجى تأكيد توفر المنتجات ورسوم التوصيل والمبلغ النهائي وموعد التوصيل.",
     ].join("\n\n");
@@ -59,6 +62,7 @@ export function WhatsAppOrder({ items }: { items: { id: string; p: Product; n: n
         <label className="block text-sm">المدينة والعنوان بالتفصيل
           <textarea value={address} onChange={(e) => setAddress(e.target.value)} required maxLength={300} rows={2} autoComplete="street-address" className={field} data-testid="order-address" />
         </label>
+        {location.mapUrl && <p className="text-sm text-primary">تم تحديد موقعكِ وسيُرفق برسالة الطلب. <a href={location.mapUrl} target="_blank" rel="noopener noreferrer" className="underline">عرض على الخريطة</a></p>}
         <label className="block text-sm">ملاحظات (اختياري)
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={300} rows={2} className={field} data-testid="order-notes" />
         </label>

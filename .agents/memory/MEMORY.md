@@ -1,0 +1,1 @@
+- [Geolocation permission waits](geolocation-permissions.md) — permission prompts may remain unresolved; keep manual entry and dismissal available.

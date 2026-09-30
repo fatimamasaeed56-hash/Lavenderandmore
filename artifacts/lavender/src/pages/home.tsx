@@ -8,6 +8,7 @@ import { products, categories, mainCategories, beautyCategories, matchesCategory
 import { useStore, bagProductId, bagColors, bagKey } from "@/hooks/use-store";
 import { CategoryFeedback } from "@/components/category-feedback";
 import { WhatsAppOrder } from "@/components/whatsapp-order";
+import { DeliveryLocationPicker, type DeliveryLocation } from "@/components/delivery-location";
 
 const base = import.meta.env.BASE_URL;
 const LOGO = `${base}images/logo.jpeg`;
@@ -73,6 +74,7 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
 
 export default function Home() {
   useReveal();
+  const [deliveryLocation, setDeliveryLocation] = useState<DeliveryLocation>({ address: "" });
   const { favs, bag, toggleFav, add, setQty, clear } = useStore();
   const [cat, setCat] = useState<Category | "all">(() => {
     const saved = sessionStorage.getItem("lm-feedback-category");
@@ -188,8 +190,9 @@ export default function Home() {
             <p className="rise font-latin text-lg text-primary/70" dir="ltr" style={{ animationDelay: "100ms" }}>Once a dream, now a reality.</p>
             <h1 className="rise mt-4 font-ruqaa text-6xl leading-[1.25] text-primary sm:text-7xl lg:text-8xl" style={{ animationDelay: "250ms" }}>كان حلماً<br /><span className="text-[hsl(280_35%_58%)]">وأصبح حقيقة</span></h1>
             <p className="rise mx-auto mt-6 max-w-md text-lg leading-loose text-foreground/75 lg:mx-0" style={{ animationDelay: "450ms" }}>
-              أكواب، عطور، منتجات تجميل والورد. من كوزمتيكس إلى عناية بالجسم، كل قطعة نختارها كأنها لكِ.
+              أكواب وعطور وهدايا — <span dir="ltr">Lavender &amp; More</span>
             </p>
+            <DeliveryLocationPicker value={deliveryLocation} onChange={setDeliveryLocation} />
             <div className="rise mt-10 flex flex-wrap justify-center gap-3 lg:justify-start" style={{ animationDelay: "600ms" }}>
               <button onClick={() => goShop("beauty")} className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-primary-foreground shadow-[0_14px_30px_-12px_hsl(289_32%_36%/0.6)] transition-transform hover:-translate-y-0.5" data-testid="button-hero-shop">
                 تسوّقي الجمال <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
@@ -325,6 +328,7 @@ export default function Home() {
             <span dir="ltr">+972593860029</span>
           </a>
           <p className="max-w-md text-xs leading-relaxed text-muted-foreground">الأسعار بالشيكل. الطلب عبر واتساب والدفع عند الاستلام. يُؤكَّد توفر المنتجات ورسوم التوصيل عبر المحادثة.</p>
+          <p className="text-xs text-muted-foreground">جميع الحقوق محفوظة — <span dir="ltr">Lavender &amp; More · 2026@</span></p>
         </div>
       </footer>
 
@@ -400,7 +404,7 @@ export default function Home() {
                     </div>
                   </li>
                 ))}
-              </ul><WhatsAppOrder items={bagItems} /></>
+              </ul><WhatsAppOrder items={bagItems} location={deliveryLocation} /></>
             )}
           </div>
           <div className="shrink-0 border-t border-primary/10 bg-card/70 p-6">
