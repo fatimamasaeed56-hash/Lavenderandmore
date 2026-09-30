@@ -17,7 +17,10 @@ export function WhatsAppOrder({ items }: { items: { id: string; p: Product; n: n
   function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
-    if (!name.trim() || !address.trim() || !/^\+?[\d\s()-]{7,20}$/.test(phone.trim()) || phone.replace(/\D/g, "").length < 7) {
+    const normalizedPhone = phone.trim()
+      .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 0x0660))
+      .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 0x06f0));
+    if (!name.trim() || !address.trim() || !/^\+?[\d\s()-]{7,20}$/.test(normalizedPhone) || normalizedPhone.replace(/\D/g, "").length < 7) {
       setError("أدخلي الاسم وعنوان التوصيل ورقم هاتف صحيح.");
       return;
     }
@@ -29,7 +32,7 @@ export function WhatsAppOrder({ items }: { items: { id: string; p: Product; n: n
       `مجموع المنتجات: ${total} شيكل (لا يشمل التوصيل)`,
       "طريقة الدفع: عند الاستلام",
       `الاسم: ${name.trim()}`,
-      `الهاتف: ${phone.trim()}`,
+      `الهاتف: ${normalizedPhone}`,
       `عنوان التوصيل: ${address.trim()}`,
       ...(notes.trim() ? [`ملاحظات: ${notes.trim()}`] : []),
       "يرجى تأكيد توفر المنتجات ورسوم التوصيل والمبلغ النهائي وموعد التوصيل.",

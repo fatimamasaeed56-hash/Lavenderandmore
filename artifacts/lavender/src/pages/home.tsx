@@ -367,12 +367,12 @@ export default function Home() {
 
       {/* Bag */}
       <Sheet open={bagOpen} onOpenChange={setBagOpen}>
-        <SheetContent side="left" className="flex w-[92vw] max-w-md flex-col bg-background border-primary/10 p-0 [&>button]:left-4 [&>button]:right-auto" dir="rtl">
+        <SheetContent side="left" className="flex w-[92vw] max-w-md flex-col bg-background border-primary/10 p-0 data-[state=open]:animate-none [&>button]:left-4 [&>button]:right-auto" style={{ left: 0, right: "auto", transform: "none", translate: "none" }} dir="rtl">
           <div className="border-b border-primary/10 p-6 text-right">
             <SheetTitle className="font-ruqaa text-3xl text-primary">حقيبتكِ</SheetTitle>
             <SheetDescription>{count ? `${count.toLocaleString("ar-EG")} قطعة` : "فارغة حالياً"}</SheetDescription>
           </div>
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-6">
             {bagItems.length === 0 ? (
               <div className="py-16 text-center">
                 <ShoppingBag className="mx-auto h-10 w-10 text-primary/40" />
@@ -384,7 +384,7 @@ export default function Home() {
                 {bagItems.map(({ id, p, n }) => (
                   <li key={id} className="flex gap-4" data-testid={`row-bag-${p.id}`}>
                     <img src={p.image} alt="" className={`h-24 w-20 rounded-2xl ${p.actualPrice || p.suppliedPhoto ? "object-contain" : "object-cover"}`} />
-                    <div className="flex-1">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-amiri text-lg leading-tight">{p.name}</p>
                         <button onClick={() => setQty(id, 0)} aria-label={`إزالة ${p.name}`} className="text-muted-foreground hover:text-destructive" data-testid={`button-remove-${p.id}`}><Trash2 className="h-4 w-4" /></button>
@@ -403,7 +403,7 @@ export default function Home() {
               </ul><WhatsAppOrder items={bagItems} /></>
             )}
           </div>
-          <div className="border-t border-primary/10 bg-card/70 p-6">
+          <div className="shrink-0 border-t border-primary/10 bg-card/70 p-6">
             <div className="flex items-center justify-between font-amiri text-xl"><span>مجموع المنتجات</span><span className="text-primary" data-testid="text-bag-total">{formatPrice(bagTotal)} شيكل</span></div>
             <div className="mt-4 flex gap-3 rounded-2xl bg-secondary p-4 text-sm leading-relaxed text-foreground/80" role="note">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
