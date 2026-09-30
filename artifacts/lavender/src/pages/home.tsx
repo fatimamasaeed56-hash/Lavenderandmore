@@ -50,16 +50,12 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
   const cat = categories.find((c) => c.id === p.category)?.label;
   return (
     <article className="group reveal" style={{ transitionDelay: `${(index % 4) * 80}ms` }} data-testid={`card-product-${p.id}`}>
-      <div className="relative overflow-hidden rounded-t-[999px] rounded-b-[28px] bg-secondary shadow-[0_20px_40px_-28px_hsl(289_32%_30%/0.5)]">
-        <button onClick={onOpen} className="block w-full aspect-[4/5] focus-visible:outline-2 focus-visible:outline-primary" aria-label={`عرض تفاصيل ${p.name}`} data-testid={`button-open-${p.id}`}>
-          <img src={p.image} alt={p.name} loading="lazy" className={`h-full w-full ${p.actualPrice || p.suppliedPhoto ? "object-contain" : "object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"}`} />
-          <span className="absolute inset-0 bg-gradient-to-t from-[hsl(289_32%_20%/0.35)] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-card shadow-[0_12px_30px_-24px_hsl(289_32%_30%/0.35)]">
+        <button onClick={onOpen} className="block w-full aspect-square p-3 sm:p-4 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-[-3px]" aria-label={`عرض تفاصيل ${p.name}`} data-testid={`button-open-${p.id}`}>
+          <img src={p.image} alt={p.name} loading="lazy" className="h-full w-full object-contain" />
         </button>
-        <button onClick={onFav} aria-pressed={fav} aria-label={fav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"} className="absolute top-[18%] left-4 grid h-10 w-10 place-items-center rounded-full bg-card/85 backdrop-blur transition-transform hover:scale-110 active:scale-95" data-testid={`button-fav-${p.id}`}>
+        <button onClick={onFav} aria-pressed={fav} aria-label={fav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"} className="absolute top-2 left-2 grid h-10 w-10 place-items-center rounded-full bg-card/90 shadow-sm backdrop-blur transition-transform hover:scale-110 active:scale-95" data-testid={`button-fav-${p.id}`}>
           <Heart className={`h-4 w-4 transition-colors ${fav ? "fill-primary text-primary" : "text-primary/70"}`} />
-        </button>
-        <button onClick={onAdd} className="absolute bottom-4 inset-x-4 rounded-full bg-card/90 py-2.5 text-sm font-medium text-primary backdrop-blur translate-y-3 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100 hover:bg-primary hover:text-primary-foreground max-md:translate-y-0 max-md:opacity-100" data-testid={`button-add-${p.id}`}>
-          أضيفي إلى الحقيبة
         </button>
       </div>
       <div className="px-2 pt-4 text-center">
@@ -67,6 +63,9 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
         <h3 className="font-amiri text-xl text-foreground mt-1">{p.name}</h3>
         <p className="mt-1 text-sm text-primary" data-testid={`text-price-${p.id}`}>{formatProductPrice(p)}</p>
         {p.perItem && <p className="mt-1 text-xs text-muted-foreground">للقطعة الواحدة، وليس لكل ما في الصورة</p>}
+        <button onClick={onAdd} className="mt-3 w-full rounded-xl border border-primary/15 bg-secondary/60 px-2 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary" data-testid={`button-add-${p.id}`}>
+          أضيفي إلى الحقيبة
+        </button>
       </div>
     </article>
   );
