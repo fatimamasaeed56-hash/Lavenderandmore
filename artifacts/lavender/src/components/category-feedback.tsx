@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@workspace/replit-auth-web";
+import { Link } from "wouter";
 import { ImagePlus, MessageCircle, Trash2, X } from "lucide-react";
 import { categories, type Category } from "@/data/products";
 
@@ -28,7 +29,7 @@ export function CategoryFeedback({ category }: { category: Category | "all" }) {
   const [selected, setSelected] = useState<Category>(category === "all" ? "cups" : category);
   const activeCategory = category === "all" ? selected : category;
   const label = categories.find((c) => c.id === activeCategory)?.label;
-  const { user, isLoading, isAuthenticated, login, logout } = useAuth();
+  const { user, isLoading, isAuthenticated, logout } = useAuth();
   const client = useQueryClient();
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -115,7 +116,7 @@ export function CategoryFeedback({ category }: { category: Category | "all" }) {
         {isLoading ? <p role="status">جارٍ التحقق من تسجيل الدخول...</p> : !isAuthenticated ? (
           <div className="text-center">
             <p className="text-sm leading-relaxed text-muted-foreground">سجّلي الدخول لكتابة رأيكِ وإرفاق صورة. يمكنكِ قراءة آراء الزبائن دون تسجيل.</p>
-            <button onClick={() => { sessionStorage.setItem("lm-feedback-category", activeCategory); login(); }} className="mt-5 rounded-full bg-primary px-6 py-3 text-primary-foreground" data-testid="feedback-login">تسجيل الدخول لإضافة فيدباك</button>
+            <Link href="/login" onClick={() => { sessionStorage.setItem("lm-feedback-category", activeCategory); }} className="mt-5 inline-block rounded-full bg-primary px-6 py-3 text-primary-foreground" data-testid="feedback-login">تسجيل الدخول لإضافة فيدباك</Link>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="space-y-4" data-testid="feedback-form">

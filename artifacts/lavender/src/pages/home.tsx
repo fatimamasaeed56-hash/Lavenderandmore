@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Heart, Search, ShoppingBag, Menu, X, Plus, Minus, Trash2, Info, ArrowLeft } from "lucide-react";
+import { Heart, Search, ShoppingBag, Menu, X, Plus, Minus, Trash2, Info, ArrowLeft, UserRound } from "lucide-react";
+import { Link } from "wouter";
 import { FaWhatsapp } from "react-icons/fa";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -125,11 +126,11 @@ export default function Home() {
     <div className="min-h-[100dvh] overflow-x-hidden">
       {/* Header */}
       <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${scrolled ? "bg-background/85 backdrop-blur-md shadow-[0_1px_0_hsl(var(--border))]" : "bg-transparent"}`}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-5">
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-3" data-testid="link-home" aria-label="لافندر آند مور — العودة للأعلى">
-            <img src={LOGO} alt="" className="h-12 w-12 rounded-full object-cover ring-1 ring-primary/20" />
+            <img src={LOGO} alt="" className="h-9 w-9 sm:h-12 sm:w-12 rounded-full object-cover ring-1 ring-primary/20" />
             <span className="leading-tight text-right">
-              <span className="block font-latin text-xl text-primary" dir="ltr">Lavender &amp; More</span>
+              <span className="block whitespace-nowrap font-latin text-sm sm:text-xl text-primary" dir="ltr">Lavender &amp; More</span>
             </span>
           </button>
           <nav className="hidden lg:flex items-center gap-8 text-sm" aria-label="التنقل الرئيسي">
@@ -145,7 +146,8 @@ export default function Home() {
               ) : <button key={n.label} onClick={n.act} className="relative py-1 text-foreground/80 hover:text-primary after:absolute after:bottom-0 after:right-0 after:h-px after:w-0 after:bg-primary after:transition-all hover:after:w-full">{n.label}</button>
             ))}
           </nav>
-          <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-1 max-sm:[&>button]:h-8 max-sm:[&>button]:w-8 max-sm:[&>a]:h-8 max-sm:[&>a]:w-8">
+            <Link href="/login" className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary" aria-label="تسجيل الدخول أو إنشاء حساب" data-testid="link-account"><UserRound className="h-5 w-5 text-primary" /></Link>
             <button onClick={() => { goShop(); setTimeout(() => searchRef.current?.focus(), 500); }} className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary" aria-label="بحث" data-testid="button-search-open"><Search className="h-5 w-5 text-primary" /></button>
             <button onClick={() => { setOnlyFavs(true); setCat("all"); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); }} className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-secondary" aria-label={`المفضلة (${favs.length})`} data-testid="button-favs">
               <Heart className="h-5 w-5 text-primary" />
