@@ -21,17 +21,17 @@ import type {
 
 import type {
   BeginBrowserLoginParams,
-  CreateFeedbackBody,
   DeleteFeedback200,
   ErrorResponse,
+  FeedbackInput,
   FeedbackItem,
+  FeedbackUploadInput,
   GetCurrentAuthUser200,
   HealthStatus,
   ListFeedback200,
   ListFeedbackParams,
   LogoutBrowserSessionParams,
-  RequestFeedbackUpload200,
-  RequestFeedbackUploadBody
+  RequestFeedbackUpload200
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -359,7 +359,7 @@ export function useLogoutBrowserSession<TData = Awaited<ReturnType<typeof logout
 
 
 
-export const getListFeedbackUrl = (params: ListFeedbackParams,) => {
+export const getListFeedbackUrl = (params?: ListFeedbackParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -374,7 +374,7 @@ export const getListFeedbackUrl = (params: ListFeedbackParams,) => {
   return stringifiedParams.length > 0 ? `/api/feedback?${stringifiedParams}` : `/api/feedback`
 }
 
-export const listFeedback = async (params: ListFeedbackParams, options?: Parameters<typeof customFetch>[1]): Promise<ListFeedback200> => {
+export const listFeedback = async (params?: ListFeedbackParams, options?: Parameters<typeof customFetch>[1]): Promise<ListFeedback200> => {
 
   return customFetch<ListFeedback200>(getListFeedbackUrl(params),
   {
@@ -396,7 +396,7 @@ export const getListFeedbackQueryKey = (params?: ListFeedbackParams,) => {
     }
 
 
-export const getListFeedbackQueryOptions = <TData = Awaited<ReturnType<typeof listFeedback>>, TError = ErrorType<ErrorResponse>>(params: ListFeedbackParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listFeedback>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getListFeedbackQueryOptions = <TData = Awaited<ReturnType<typeof listFeedback>>, TError = ErrorType<ErrorResponse>>(params?: ListFeedbackParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listFeedback>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -420,7 +420,7 @@ export type ListFeedbackQueryError = ErrorType<ErrorResponse>
 
 
 export function useListFeedback<TData = Awaited<ReturnType<typeof listFeedback>>, TError = ErrorType<ErrorResponse>>(
- params: ListFeedbackParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listFeedback>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ params?: ListFeedbackParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listFeedback>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -445,7 +445,7 @@ export const getCreateFeedbackUrl = () => {
   return `/api/feedback`
 }
 
-export const createFeedback = async (createFeedbackBody: CreateFeedbackBody, options?: Parameters<typeof customFetch>[1]): Promise<FeedbackItem> => {
+export const createFeedback = async (feedbackInput: FeedbackInput, options?: Parameters<typeof customFetch>[1]): Promise<FeedbackItem> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -466,7 +466,7 @@ return customFetch<FeedbackItem>(getCreateFeedbackUrl(),
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(createFeedbackBody)
+    body: JSON.stringify(feedbackInput)
   }
 );}
 
@@ -504,9 +504,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type CreateFeedbackMutationResult = NonNullable<Awaited<ReturnType<typeof createFeedback>>>
-    export type CreateFeedbackMutationBody = BodyType<CreateFeedbackBody>
+    export type CreateFeedbackMutationBody = BodyType<FeedbackInput>
     export type CreateFeedbackMutationError = ErrorType<ErrorResponse>
-    export type CreateFeedbackMutationVariables = {data: BodyType<CreateFeedbackBody>}
+    export type CreateFeedbackMutationVariables = {data: BodyType<FeedbackInput>}
 
     export const useCreateFeedback = <TError = ErrorType<ErrorResponse>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createFeedback>>, TError,CreateFeedbackMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
@@ -530,7 +530,7 @@ export const getRequestFeedbackUploadUrl = () => {
 /**
  * Direct PUT to signed URL with matching Content-Type. URL expires after 15 minutes.
  */
-export const requestFeedbackUpload = async (requestFeedbackUploadBody: RequestFeedbackUploadBody, options?: Parameters<typeof customFetch>[1]): Promise<RequestFeedbackUpload200> => {
+export const requestFeedbackUpload = async (feedbackUploadInput: FeedbackUploadInput, options?: Parameters<typeof customFetch>[1]): Promise<RequestFeedbackUpload200> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -551,7 +551,7 @@ return customFetch<RequestFeedbackUpload200>(getRequestFeedbackUploadUrl(),
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(requestFeedbackUploadBody)
+    body: JSON.stringify(feedbackUploadInput)
   }
 );}
 
@@ -589,9 +589,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type RequestFeedbackUploadMutationResult = NonNullable<Awaited<ReturnType<typeof requestFeedbackUpload>>>
-    export type RequestFeedbackUploadMutationBody = BodyType<RequestFeedbackUploadBody>
+    export type RequestFeedbackUploadMutationBody = BodyType<FeedbackUploadInput>
     export type RequestFeedbackUploadMutationError = ErrorType<ErrorResponse>
-    export type RequestFeedbackUploadMutationVariables = {data: BodyType<RequestFeedbackUploadBody>}
+    export type RequestFeedbackUploadMutationVariables = {data: BodyType<FeedbackUploadInput>}
 
     export const useRequestFeedbackUpload = <TError = ErrorType<ErrorResponse>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestFeedbackUpload>>, TError,RequestFeedbackUploadMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}

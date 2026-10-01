@@ -6,10 +6,10 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type RequestFeedbackUploadBodyContentType = typeof RequestFeedbackUploadBodyContentType[keyof typeof RequestFeedbackUploadBodyContentType];
+export type FeedbackUploadInputContentType = typeof FeedbackUploadInputContentType[keyof typeof FeedbackUploadInputContentType];
 
 
-export const RequestFeedbackUploadBodyContentType = {
+export const FeedbackUploadInputContentType = {
   'image/jpeg': 'image/jpeg',
   'image/png': 'image/png',
   'image/webp': 'image/webp',

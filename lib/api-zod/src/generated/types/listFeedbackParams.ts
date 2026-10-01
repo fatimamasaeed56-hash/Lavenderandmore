@@ -8,5 +8,8 @@
 import type { FeedbackCategory } from './feedbackCategory';
 
 export type ListFeedbackParams = {
-category: FeedbackCategory;
+/**
+ * Omit to list feedback from all categories together.
+ */
+category?: FeedbackCategory;
 };

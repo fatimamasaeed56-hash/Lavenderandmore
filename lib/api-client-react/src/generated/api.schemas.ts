@@ -5,6 +5,47 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export type FeedbackCategory = typeof FeedbackCategory[keyof typeof FeedbackCategory];
+
+
+export const FeedbackCategory = {
+  cups: 'cups',
+  perfumes: 'perfumes',
+  beauty: 'beauty',
+  cosmetics: 'cosmetics',
+  bodycare: 'bodycare',
+  flowers: 'flowers',
+  printing: 'printing',
+} as const;
+
+export interface FeedbackInput {
+  category: FeedbackCategory;
+  /**
+     * @minLength 3
+     * @maxLength 2000
+     */
+  text: string;
+  imagePath?: string;
+}
+
+export type FeedbackUploadInputContentType = typeof FeedbackUploadInputContentType[keyof typeof FeedbackUploadInputContentType];
+
+
+export const FeedbackUploadInputContentType = {
+  'image/jpeg': 'image/jpeg',
+  'image/png': 'image/png',
+  'image/webp': 'image/webp',
+} as const;
+
+export interface FeedbackUploadInput {
+  contentType: FeedbackUploadInputContentType;
+  /**
+     * @minimum 1
+     * @maximum 5242880
+     */
+  size: number;
+}
+
 export interface ErrorEnvelope {
   error: string;
 }
@@ -20,19 +61,6 @@ export interface AuthUser {
   /** @nullable */
   profileImageUrl: string | null;
 }
-
-export type FeedbackCategory = typeof FeedbackCategory[keyof typeof FeedbackCategory];
-
-
-export const FeedbackCategory = {
-  cups: 'cups',
-  perfumes: 'perfumes',
-  beauty: 'beauty',
-  cosmetics: 'cosmetics',
-  bodycare: 'bodycare',
-  flowers: 'flowers',
-  printing: 'printing',
-} as const;
 
 export interface FeedbackItem {
   id: string;
@@ -67,39 +95,14 @@ returnTo?: string;
 };
 
 export type ListFeedbackParams = {
-category: FeedbackCategory;
+/**
+ * Omit to list feedback from all categories together.
+ */
+category?: FeedbackCategory;
 };
 
 export type ListFeedback200 = {
   items: FeedbackItem[];
-};
-
-export type CreateFeedbackBody = {
-  category: FeedbackCategory;
-  /**
-     * @minLength 3
-     * @maxLength 2000
-     */
-  text: string;
-  imagePath?: string;
-};
-
-export type RequestFeedbackUploadBodyContentType = typeof RequestFeedbackUploadBodyContentType[keyof typeof RequestFeedbackUploadBodyContentType];
-
-
-export const RequestFeedbackUploadBodyContentType = {
-  'image/jpeg': 'image/jpeg',
-  'image/png': 'image/png',
-  'image/webp': 'image/webp',
-} as const;
-
-export type RequestFeedbackUploadBody = {
-  contentType: RequestFeedbackUploadBodyContentType;
-  /**
-     * @minimum 1
-     * @maximum 5242880
-     */
-  size: number;
 };
 
 export type RequestFeedbackUpload200 = {

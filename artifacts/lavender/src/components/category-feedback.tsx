@@ -29,6 +29,7 @@ export function CategoryFeedback({ category }: { category: Category | "all" }) {
   const [selected, setSelected] = useState<Category>(category === "all" ? "cups" : category);
   const activeCategory = category === "all" ? selected : category;
   const label = categories.find((c) => c.id === activeCategory)?.label;
+  const headingId = category === "all" ? "feedback-heading" : `feedback-heading-${category}`;
   const { user, isLoading, isAuthenticated, logout } = useAuth();
   const client = useQueryClient();
   const [text, setText] = useState("");
@@ -39,8 +40,8 @@ export function CategoryFeedback({ category }: { category: Category | "all" }) {
   const [deleting, setDeleting] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const feedback = useQuery({
-    queryKey: ["feedback", activeCategory, user?.id],
-    queryFn: () => request<{ items: Feedback[] }>(`${api}?category=${activeCategory}`),
+    queryKey: ["feedback", category, user?.id],
+    queryFn: () => request<{ items: Feedback[] }>(category === "all" ? api : `${api}?category=${category}`),
     staleTime: 0,
     refetchInterval: 30000,
   });
@@ -98,15 +99,15 @@ export function CategoryFeedback({ category }: { category: Category | "all" }) {
     submit.mutate();
   }
   return (
-    <section className="mt-20 border-t border-primary/15 pt-12" aria-labelledby="feedback-heading" data-testid="category-feedback">
+    <section className="mt-20 border-t border-primary/15 pt-12" aria-labelledby={headingId} data-testid={category === "all" ? "all-feedback" : "category-feedback"}>
       <div className="text-center">
         <MessageCircle className="mx-auto h-7 w-7 text-primary/70" aria-hidden />
-        <h3 id="feedback-heading" className="mt-3 font-amiri text-3xl text-primary">آراؤكم — {label}</h3>
-        <p className="mt-2 text-sm text-muted-foreground">شاركي تجربتكِ، وأرفقي صورة إذا أحببتِ.</p>
+        <h3 id={headingId} className="mt-3 font-amiri text-3xl text-primary">{category === "all" ? "آراء عملائنا — جميع الأقسام" : `آراؤكم — ${label}`}</h3>
+        <p className="mt-2 text-sm text-muted-foreground">{category === "all" ? "تجاربكم وصوركم من جميع الأقسام، الأحدث أولاً." : "شاركي تجربتكِ، وأرفقي صورة إذا أحببتِ."}</p>
       </div>
       {category === "all" && (
         <label className="mx-auto mt-6 block max-w-md text-sm">
-          اختاري القسم
+          اختاري القسم الذي تريدين إضافة رأيكِ عنه
           <select value={selected} disabled={submit.isPending} onChange={(e) => { setSelected(e.target.value as Category); setSuccess(""); }} className="mt-2 w-full rounded-xl border border-input bg-card p-3" data-testid="feedback-category">
             {categories.filter((c) => c.id !== "all").map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>
@@ -154,13 +155,14 @@ export function CategoryFeedback({ category }: { category: Category | "all" }) {
       <div className="mx-auto mt-8 max-w-4xl" aria-live="polite">
         {feedback.isPending ? <p className="text-center text-muted-foreground">جارٍ تحميل الآراء...</p> : feedback.isError ? (
           <div className="text-center"><p className="text-destructive">تعذّر تحميل الآراء.</p><button onClick={() => void feedback.refetch()} className="mt-3 text-primary underline">إعادة المحاولة</button></div>
-        ) : feedback.data.items.length === 0 ? <p className="text-center text-muted-foreground">لا توجد آراء في هذا القسم بعد. كوني أول من يشارك تجربته.</p> : (
+        ) : feedback.data.items.length === 0 ? <p className="text-center text-muted-foreground">{category === "all" ? "لا توجد آراء بعد. كوني أول من يشارك تجربته." : "لا توجد آراء في هذا القسم بعد. كوني أول من يشارك تجربته."}</p> : (
           <div className="grid gap-5 sm:grid-cols-2">{feedback.data.items.map((item) => (
             <article key={item.id} className="min-w-0 rounded-3xl border border-primary/10 bg-card p-5" data-testid={`feedback-${item.id}`}>
               <div className="flex items-start justify-between gap-3">
                 <div><h4 className="font-medium">{item.authorName}</h4><time dateTime={item.createdAt} className="text-xs text-muted-foreground">{new Date(item.createdAt).toLocaleDateString("ar")}</time></div>
                 {item.canDelete && <button onClick={() => void deleteFeedback(item.id)} disabled={deleting !== null} aria-label="حذف رأيي" className="rounded-full p-2 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>}
               </div>
+              {category === "all" && <p className="mt-3 w-fit rounded-full bg-secondary px-3 py-1 text-xs text-primary">{categories.find((c) => c.id === item.category)?.label}</p>}
               <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-loose">{item.text}</p>
               {item.imageUrl && <a href={item.imageUrl} target="_blank" rel="noopener noreferrer" aria-label="عرض الصورة المرفقة بالحجم الكامل"><img src={item.imageUrl} alt={`صورة مرفقة برأي ${item.authorName}`} loading="lazy" className="mt-4 max-h-80 w-full rounded-2xl object-contain" /></a>}
             </article>

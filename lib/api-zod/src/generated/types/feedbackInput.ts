@@ -7,7 +7,7 @@
  */
 import type { FeedbackCategory } from './feedbackCategory';
 
-export type CreateFeedbackBody = {
+export interface FeedbackInput {
   category: FeedbackCategory;
   /**
      * @minLength 3
@@ -15,4 +15,4 @@ export type CreateFeedbackBody = {
      */
   text: string;
   imagePath?: string;
-};
+}

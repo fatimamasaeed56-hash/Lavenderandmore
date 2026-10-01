@@ -46,8 +46,9 @@ function displayName(req: Request) {
   return name.slice(0, 150) || "Customer";
 }
 router.get("/feedback", async (req, res) => {
-  if (!category(req.query.category)) return res.status(400).json({ error: "Invalid category" });
-  const rows = await db.select().from(feedbackTable).where(eq(feedbackTable.category, req.query.category))
+  const selected = req.query.category;
+  if (selected !== undefined && !category(selected)) return res.status(400).json({ error: "Invalid category" });
+  const rows = await db.select().from(feedbackTable).where(selected === undefined ? undefined : eq(feedbackTable.category, selected))
     .orderBy(desc(feedbackTable.createdAt), desc(feedbackTable.id)).limit(100);
   return res.json({ items: rows.map(row => item(row, req.user?.id)) });
 });

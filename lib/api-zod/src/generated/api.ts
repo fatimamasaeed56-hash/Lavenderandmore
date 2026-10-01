@@ -37,7 +37,7 @@ export const LogoutBrowserSessionResponse = zod.void()
 
 
 export const ListFeedbackQueryParams = zod.object({
-  "category": zod.enum(['cups', 'perfumes', 'beauty', 'cosmetics', 'bodycare', 'flowers', 'printing'])
+  "category": zod.enum(['cups', 'perfumes', 'beauty', 'cosmetics', 'bodycare', 'flowers', 'printing']).optional().describe('Omit to list feedback from all categories together.')
 })
 
 export const ListFeedbackResponse = zod.object({

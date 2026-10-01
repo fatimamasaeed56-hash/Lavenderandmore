@@ -6,3 +6,4 @@ export type {
   ListFeedback200,
   RequestFeedbackUpload200,
 } from "./generated/types";
+export * from './generated/types';

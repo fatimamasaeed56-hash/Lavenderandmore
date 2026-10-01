@@ -294,9 +294,13 @@ export default function Home() {
               ))}
             </div>
           )}
-          <CategoryFeedback key={cat} category={cat} />
+          {cat !== "all" && <CategoryFeedback key={cat} category={cat} />}
         </div>
       </section>
+
+      <div id="customer-feedback" className="mx-auto max-w-6xl px-5 pb-24">
+        <CategoryFeedback category="all" />
+      </div>
 
       {/* Rituals */}
       <section className="mx-auto max-w-6xl px-5 pb-28">
