@@ -1,3 +1,5 @@
+import { translate, type Language } from "@/i18n/messages";
+
 export type Category = "cups" | "perfumes" | "beauty" | "cosmetics" | "bodycare" | "flowers" | "printing";
 
 export interface Product {
@@ -24,8 +26,8 @@ const confirmedVolumesMl: Record<string, number> = {
   "perfume-white-musk": 50,
   "perfume-powder-musk": 50,
 };
-export const productVolumeLabel = (product: Product) =>
-  confirmedVolumesMl[product.id] ? `حجم العبوة: ${confirmedVolumesMl[product.id]} مل` : "";
+export const productVolumeLabel = (product: Product, language: Language = "ar") =>
+  confirmedVolumesMl[product.id] ? `${translate(language, "حجم العبوة")}: ${confirmedVolumesMl[product.id]} ${translate(language, "مل")}` : "";
 
 export const categories: { id: Category | "all"; label: string; hint: string; parent?: Category }[] = [
   { id: "all", label: "الكل", hint: "كل ما في الرفوف" },
@@ -65,6 +67,6 @@ export const products: Product[] = [
   { id: "cup-hearts-pink-band", name: "كوب قلوب وشريط زهري", category: "cups", price: 20, actualPrice: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/cup-hearts-pink-band.jpeg`, short: "قلوب حمراء وشريط زهري حول الكوب", description: "كوب أبيض بتصميم قلوب حمراء وشريط زهري مرسوم حول الجزء السفلي.", notes: ["قلوب حمراء", "شريط زهري مرسوم"] },
 ];
 
-export const formatPrice = (n: number) => `${n.toLocaleString("ar-EG")}`;
-export const formatProductPrice = (p: Product, quantity = 1) =>
-  `${formatPrice(p.price * quantity)} شيكل`;
+export const formatPrice = (n: number, language: Language = "ar") => `${n.toLocaleString(language === "ar" ? "ar-EG" : "en")}`;
+export const formatProductPrice = (p: Product, quantity = 1, language: Language = "ar") =>
+  `${formatPrice(p.price * quantity, language)} ${translate(language, "شيكل")}`;

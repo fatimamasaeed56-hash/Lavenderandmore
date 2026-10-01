@@ -6,6 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
 import Home from '@/pages/home';
 import AuthPage from '@/pages/auth';
+import { useLanguage } from '@/i18n/context';
 import {
   Route,
   Switch,
@@ -15,11 +16,28 @@ import {
 
 const queryClient = new QueryClient();
 
+function PageMetadata() {
+  const [path] = useLocation();
+  const { t, language } = useLanguage();
+  const title = path === "/login" ? `${t("تسجيل الدخول")} — ${t("لافندر آند مور")}`
+    : path === "/signup" ? `${t("إنشاء حساب")} — ${t("لافندر آند مور")}`
+    : path === "/" ? t("لافندر آند مور | أكواب، عطور، منتجات تجميل والورد")
+    : `${t("الصفحة غير موجودة")} — ${t("لافندر آند مور")}`;
+  return <>
+    <title>{title}</title>
+    <meta name="description" content={t("لافندر آند مور — أكواب، عطور، منتجات تجميل تشمل كوزمتيكس وعناية بالجسم، والورد. كان حلماً، وأصبح حقيقة.")} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={t("أكواب، عطور، منتجات تجميل تشمل كوزمتيكس وعناية بالجسم، والورد.")} />
+    <meta property="og:locale" content={language === "ar" ? "ar_AR" : "en_US"} />
+  </>;
+}
+
 function Router() {
   return (
     // Keep a shared shell (sidebar, navbar) outside the boundary so it
     // survives a page crash.
     <RoutedErrorBoundary>
+      <PageMetadata />
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/login">{() => <AuthPage mode="login" />}</Route>

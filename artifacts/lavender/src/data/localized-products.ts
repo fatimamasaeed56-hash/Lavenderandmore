@@ -1,0 +1,92 @@
+import { categories, type Product } from "./products";
+import { translate, type Language } from "@/i18n/messages";
+
+// IDs, prices and images always come from the original catalog.
+export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "bouquet-turquoise": {
+    name: "Bouquet with turquoise wrapping",
+    short: "White and pink flowers with turquoise wrapping and a soft ribbon",
+    description: "The bouquet pictured with turquoise wrapping. The price is for one bouquet. To request other colors, enter your preferred colors in the box below.",
+  },
+  "baby-powder-lotion": {
+    name: "Baby Powder lotion", short: "Body lotion in a pink pump bottle",
+    description: "Baby Powder body lotion as pictured. The price is for one bottle, not both bottles.",
+  },
+  "body-soap": {
+    name: "Body soap", short: "Soap in a container with a pink lid",
+    description: "Body soap as pictured. The price is for one container, not all the containers shown.",
+  },
+  "bodycare-bag": {
+    name: "Body care bag", short: "Body care products in a small bag",
+    description: "A bag of body care products as pictured. The price is for one bag, not all three bags.",
+  },
+  "candy-lotion": {
+    name: "Candy, Sweet & Gummy body lotion", short: "Body lotion in white bottles with gold caps",
+    description: "The Candy, Sweet and Gummy body lotion selection pictured. The price is for one bottle, not the whole selection.",
+  },
+  "liquid-lipstick": {
+    name: "Liquid lipstick", short: "Liquid lipstick in various colors",
+    description: "Liquid lipstick as pictured. The price is per item, not the whole selection.",
+  },
+  "lipstick-stick": {
+    name: "Lipstick", short: "Lipstick in various colors",
+    description: "Lipstick as pictured. The price is per item, not all the lipsticks shown.",
+  },
+  "blush": {
+    name: "Blush", short: "Blush in a small compact",
+    description: "Blush as pictured. The price is per item, not the entire display box.",
+  },
+  "perfume-qissa": {
+    name: "Qissa perfumes", short: "Qissa perfume selection in the supplied photo",
+    description: "A supplied photo of the Qissa perfume selection. The price is per item, not all the products pictured.",
+  },
+  "perfume-only-you": {
+    name: "Only You perfume", short: "Only You perfume in the supplied photo",
+    description: "Only You perfume as shown in the supplied photo. The price is per item, not a set of products.",
+  },
+  "perfume-selection": {
+    name: "Perfume selection", short: "A selection including a purple perfume bottle",
+    description: "A supplied photo of several perfumes, including a purple bottle. The price is for one item only, not the entire selection. Adding one to your bag means one item.",
+  },
+  "perfume-marshmallow": {
+    name: "Marshmallow — perfume & body mist", short: "Perfume and body mist in the supplied photo",
+    description: "A supplied photo of Marshmallow perfume and body mist. The price is for one item only, not the perfume and mist together.",
+  },
+  "perfume-white-musk": {
+    name: "White Musk — IBRAQ", short: "White Musk in the supplied photo",
+    description: "IBRAQ White Musk as shown in the supplied photo. The price is per item.",
+  },
+  "perfume-powder-musk": {
+    name: "Powder Musk — IBRAQ", short: "Powder Musk in the supplied photo",
+    description: "IBRAQ Powder Musk as shown in the supplied photo. The price is per item.",
+  },
+  "cup-cherry": {
+    name: "Cherry cup", short: "Red cherry illustrations and green leaves",
+    description: "A white cup decorated with red cherry illustrations and green leaves.",
+  },
+  "cup-pink-heart": {
+    name: "Pink heart cup", short: "Pink hearts on a white background",
+    description: "A white cup decorated with light pink hearts.",
+  },
+  "cup-red-heart": {
+    name: "Red heart cup", short: "Red hearts on a white background",
+    description: "A white cup decorated with red hearts across its surface.",
+  },
+  "cup-hearts-pink-band": {
+    name: "Hearts & pink band cup", short: "Red hearts and a pink band around the cup",
+    description: "A white cup with red hearts and a painted pink band around the bottom.",
+  },
+};
+
+export function localizeProduct(product: Product, language: Language): Product {
+  if (language === "ar") return product;
+  const copy = englishProducts[product.id];
+  if (!copy) throw new Error(`Missing English catalog translation: ${product.id}`);
+  return { ...product, ...copy, notes: product.notes.map((note) => translate(language, note)) };
+}
+
+export function localizedCategories(language: Language) {
+  return categories.map((category) => ({
+    ...category, label: translate(language, category.label), hint: translate(language, category.hint),
+  }));
+}

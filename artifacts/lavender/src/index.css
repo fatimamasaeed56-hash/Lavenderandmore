@@ -438,6 +438,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;o
 .font-ruqaa{font-family:'Aref Ruqaa',serif}
 .font-amiri{font-family:'Amiri',serif}
 .font-latin{font-family:'Cormorant Garamond',serif;font-style:italic}
+html[lang="en"] body{font-family:Arial,sans-serif}
+html[lang="en"] .font-ruqaa,html[lang="en"] .font-amiri{font-family:'Cormorant Garamond',Georgia,serif}
 @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
 @keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
