@@ -8,6 +8,7 @@ import { products, categories, mainCategories, beautyCategories, matchesCategory
 import { useStore, bagProductId, bagColors, bagKey } from "@/hooks/use-store";
 import { CategoryFeedback } from "@/components/category-feedback";
 import { WhatsAppOrder } from "@/components/whatsapp-order";
+import { productVolumeLabel } from "@/data/products";
 import { DeliveryLocationPicker, type DeliveryLocation } from "@/components/delivery-location";
 
 const base = import.meta.env.BASE_URL;
@@ -61,6 +62,7 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
       <div className="px-2 pt-4 text-center">
         <p className="text-xs tracking-wide text-muted-foreground">{cat}</p>
         <h3 className="font-amiri text-xl text-foreground mt-1">{p.name}</h3>
+        {productVolumeLabel(p) && <p className="mt-2 text-sm text-muted-foreground" data-testid={`text-volume-${p.id}`}>{productVolumeLabel(p)}</p>}
         <p className="mt-1 text-sm text-primary" data-testid={`text-price-${p.id}`}>{formatProductPrice(p)}</p>
         {p.perItem && <p className="mt-1 text-xs text-muted-foreground">للقطعة الواحدة، وليس لكل ما في الصورة</p>}
         <button onClick={onAdd} className="mt-3 w-full rounded-xl border border-primary/15 bg-secondary/60 px-2 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary" data-testid={`button-add-${p.id}`}>
@@ -341,6 +343,7 @@ export default function Home() {
                 <p className="text-xs text-muted-foreground">{categories.find((c) => c.id === open.category)?.label}</p>
                 <DialogTitle className="mt-1 font-amiri text-3xl font-normal text-primary">{open.name}</DialogTitle>
                 <DialogDescription className="mt-4 leading-loose text-foreground/75">{open.description}</DialogDescription>
+                {productVolumeLabel(open) && <p className="mt-3 text-sm text-primary">{productVolumeLabel(open)}</p>}
                 <ul className="mt-5 flex flex-wrap gap-2">{open.notes.map((n) => <li key={n} className="rounded-full bg-secondary px-3 py-1 text-xs text-primary">{n}</li>)}</ul>
                 <p className="mt-6 text-2xl text-primary">{formatProductPrice(open)}</p>
                 {open.category === "flowers" && <div className="mt-5 rounded-2xl border border-primary/20 bg-secondary/40 p-4">
@@ -393,6 +396,7 @@ export default function Home() {
                         <button onClick={() => setQty(id, 0)} aria-label={`إزالة ${p.name}`} className="text-muted-foreground hover:text-destructive" data-testid={`button-remove-${p.id}`}><Trash2 className="h-4 w-4" /></button>
                       </div>
                       <p className="text-sm text-primary">{formatProductPrice(p, n)}</p>
+                      {productVolumeLabel(p) && <p className="mt-1 text-xs text-muted-foreground">{productVolumeLabel(p)}</p>}
                       {p.category === "flowers" && <p className="mt-1 break-words text-xs text-muted-foreground">{bagColors(id) ? `الألوان المطلوبة: ${bagColors(id)}` : "الألوان كما في الصورة"}</p>}
                       {p.perItem && <p className="mt-1 text-xs text-muted-foreground">الكمية بالقطعة، وليست مجموعات الصور</p>}
                       <div className="mt-2 inline-flex items-center rounded-full border border-primary/20">

@@ -15,6 +15,14 @@ export interface Product {
   notes: string[];
 }
 
+// Only sizes legible on the supplied packaging photos are listed.
+const confirmedVolumesMl: Record<string, number> = {
+  "perfume-only-you": 50,
+  "perfume-selection": 100,
+};
+export const productVolumeLabel = (product: Product) =>
+  confirmedVolumesMl[product.id] ? `حجم العبوة: ${confirmedVolumesMl[product.id]} مل` : "";
+
 export const categories: { id: Category | "all"; label: string; hint: string; parent?: Category }[] = [
   { id: "all", label: "الكل", hint: "كل ما في الرفوف" },
   { id: "cups", label: "أكواب", hint: "لقهوة الصباح" },
