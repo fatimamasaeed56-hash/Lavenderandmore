@@ -15,10 +15,14 @@ export interface Product {
   notes: string[];
 }
 
-// Only sizes legible on the supplied packaging photos are listed.
+// Sizes verified from packaging photos or confirmed by the shop owner.
 const confirmedVolumesMl: Record<string, number> = {
   "perfume-only-you": 50,
   "perfume-selection": 100,
+  "perfume-qissa": 50,
+  "perfume-marshmallow": 50,
+  "perfume-white-musk": 50,
+  "perfume-powder-musk": 50,
 };
 export const productVolumeLabel = (product: Product) =>
   confirmedVolumesMl[product.id] ? `حجم العبوة: ${confirmedVolumesMl[product.id]} مل` : "";
