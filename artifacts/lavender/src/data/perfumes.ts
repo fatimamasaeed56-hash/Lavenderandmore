@@ -5,6 +5,8 @@ type PerfumeRow = [id: string, name: string, englishName: string, volume: number
 
 // Owner-confirmed catalog. OPERA awaits a verified photo.
 const rows: PerfumeRow[] = [
+  ["mousuf-sapphire", "موصوف أزرق — MOUSUF SAPPHIRE", "MOUSUF SAPPHIRE", 50, 15, "0147"],
+  ["marshmallow-mist", "LUENCO MARSHMALLOW — رذاذ للجسم", "LUENCO MARSHMALLOW BODY MIST", 100, 5, "0152"],
   ["tahara-pomegranate", "مسك الطهارة رمان", "MUSK AL TAHARA POMEGRANATE", 20, 15, "0144"],
   ["tahara-cranberry", "مسك الطهارة توت بري", "MUSK AL TAHARA CRANBERRY", 20, 15, "0140"],
   ["inass", "لافيرن جورجينا", "LAVERNE GEORGINA", 100, 45, "0139"],
