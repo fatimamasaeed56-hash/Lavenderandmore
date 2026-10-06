@@ -9,3 +9,9 @@ Remove old multi-perfume group photos from the catalog display. Keep tidy existi
 **Why:** The owner requested this arrangement explicitly.
 
 **How to apply:** Compare perfume uploads by product identity and angle when assembling the catalog. Identical duplicate photos need only one copy.
+
+For the four Lattafa perfumes, display the name, volume (75 ml), and price (55 ILS each) with each photo. Do not show color descriptions or a “per item” label.
+
+**Why:** The owner clarified that the supplied colors were only for identifying the photos, not customer-facing copy; names and sizes must remain visible.
+
+**How to apply:** Keep Cookie Crave, Vanilla Freak, Whipped Pleasure, and Berry On Top individually labeled on catalog cards.

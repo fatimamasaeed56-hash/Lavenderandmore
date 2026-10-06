@@ -69,8 +69,8 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
       </div>
       <div className="px-2 pt-4 text-center">
         {!minimalCard && <p className="text-xs tracking-wide text-muted-foreground">{cat}</p>}
-        <h3 className={minimalCard ? "sr-only" : "font-amiri text-xl text-foreground mt-1"}>{p.name}</h3>
-        {!minimalCard && productVolumeLabel(p, language) && <p className="mt-2 text-sm text-muted-foreground" data-testid={`text-volume-${p.id}`}>{productVolumeLabel(p, language)}</p>}
+        <h3 className="font-amiri text-xl text-foreground mt-1">{p.name}</h3>
+        {productVolumeLabel(p, language) && <p className="mt-2 text-sm text-muted-foreground" data-testid={`text-volume-${p.id}`}>{productVolumeLabel(p, language)}</p>}
         <p className="mt-1 text-sm text-primary" data-testid={`text-price-${p.id}`}>{formatProductPrice(p, 1, language)}</p>
         {p.perItem && <p className="mt-1 text-xs text-muted-foreground">{t("للقطعة الواحدة، وليس لكل ما في الصورة")}</p>}
         <button onClick={onAdd} className="mt-3 w-full rounded-xl border border-primary/15 bg-secondary/60 px-2 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary" data-testid={`button-add-${p.id}`}>
