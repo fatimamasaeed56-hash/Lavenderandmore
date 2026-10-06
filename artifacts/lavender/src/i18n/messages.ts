@@ -5,6 +5,7 @@ export const isLanguage = (value: unknown): value is Language => value === "ar" 
 // Arabic is the original shop copy. Only fixed UI/catalog text goes through this dictionary.
 export const english: Record<string, string> = {
   "اكتشفي": "Discover",
+  "رفوفنا": "Our shelves",
   "إغلاق": "Close",
   "المتجر": "Shop",
   "حكايتنا": "Our story",

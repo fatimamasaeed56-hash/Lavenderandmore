@@ -138,24 +138,30 @@ export default function Home() {
   const nav: { id: string; label: string; act: () => void; children?: typeof beautyCategories }[] = [
     { id: "shop", label: t("المتجر"), act: () => goShop("all") },
     ...mainCategories.map((c) => ({ id: c.id, label: c.label, act: () => goShop(c.id), children: c.id === "beauty" ? beautyCategories : undefined })),
-    { id: "story", label: t("حكايتنا"), act: () => document.getElementById("story")?.scrollIntoView({ behavior: "smooth" }) },
   ];
 
   return (
     <div className="min-h-[100dvh] overflow-x-hidden">
       {/* Header */}
       <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${scrolled ? "bg-background/85 backdrop-blur-md shadow-[0_1px_0_hsl(var(--border))]" : "bg-transparent"}`}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-5">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-3 py-3 sm:flex-nowrap sm:gap-4 sm:px-5">
            <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex min-w-0 items-center gap-2 sm:gap-3" data-testid="link-home" aria-label={t("لافندر آند مور — العودة للأعلى")}>
             <img src={LOGO} alt="" className="h-9 w-9 sm:h-12 sm:w-12 rounded-full object-cover ring-1 ring-primary/20" />
              <span className="hidden leading-tight text-start sm:block">
                <span className="block font-latin text-sm sm:whitespace-nowrap sm:text-xl text-primary" dir="ltr">Lavender &amp; More</span>
             </span>
           </button>
-          <DiscoverMenu items={nav.flatMap((n) => [
-            { id: n.id, label: n.label, act: n.act },
-            ...(n.children ?? []).map((c) => ({ id: c.id, label: c.label, act: () => goShop(c.id), nested: true })),
-          ])} />
+          <div className="flex shrink-0 items-center gap-1 sm:gap-3">
+            <DiscoverMenu items={nav.flatMap((n) => [
+              { id: n.id, label: n.label, act: n.act },
+              ...(n.children ?? []).map((c) => ({ id: c.id, label: c.label, act: () => goShop(c.id), nested: true })),
+            ])} />
+            <button type="button" onClick={() => document.getElementById("story")?.scrollIntoView({ behavior: "smooth" })}
+              className="whitespace-nowrap rounded-full px-2 py-2 text-sm font-medium text-primary hover:bg-secondary focus-visible:outline-2 focus-visible:outline-primary sm:px-4 sm:text-base"
+              data-testid="button-header-story">
+              {t("حكايتنا")}
+            </button>
+          </div>
            <div className="flex shrink-0 items-center gap-1 max-sm:[&>button]:h-8 max-sm:[&>button]:w-8 max-sm:[&>a]:h-8 max-sm:[&>a]:w-8">
              <LanguageSwitch />
              <Link href="/login" className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary" aria-label={t("تسجيل الدخول أو إنشاء حساب")} data-testid="link-account"><UserRound className="h-5 w-5 text-primary" /></Link>

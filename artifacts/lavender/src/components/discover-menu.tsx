@@ -44,7 +44,7 @@ export function DiscoverMenu({ items }: { items: DiscoverItem[] }) {
         data-testid="button-discover"
         onClick={() => { pinned.current = !pinned.current; setOpen(pinned.current); }}
         className="flex items-center gap-1 rounded-full px-2 py-2 text-sm font-medium text-primary hover:bg-secondary focus-visible:outline-2 focus-visible:outline-primary sm:px-4 sm:text-base">
-        {t("اكتشفي")}
+        {t("رفوفنا")}
         <ChevronDown aria-hidden className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
