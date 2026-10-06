@@ -31,7 +31,7 @@ const { english, translate, LANGUAGE_STORAGE_KEY, isLanguage } = load("src/i18n/
 const { products, categories, formatProductPrice, productVolumeLabel } = load("src/data/products.ts");
 const { localizeProduct, localizedCategories, englishProducts } = load("src/data/localized-products.ts");
 const { buildOrderMessage, normalizePhone } = load("src/components/whatsapp-order.tsx");
-const { bagKey, bagColors } = load("src/hooks/use-store.ts");
+const { bagKey, bagColors, bagProductId } = load("src/hooks/use-store.ts");
 
 test("auth starts outside an embedded preview and reports blocked tabs", () => {
   const { navigateToAuth } = load("../../lib/replit-auth-web/src/use-auth.ts");
@@ -84,6 +84,20 @@ test("cosmetics contains only the replacement products with per-item pricing", (
     assert.equal(p.perItem ?? false, false);
   }
   assert.ok(!products.some((p) => ["blush", "lipstick-stick"].includes(p.id)));
+});
+
+test("body care packages have one catalog card and four independently orderable options", () => {
+  const options = products.filter((p) => p.variantGroup === "bodycare-packages");
+  assert.equal(options.length, 4);
+  assert.equal(options.filter((p) => !p.hiddenFromCatalog).length, 1);
+  assert.equal(new Set(options.map((p) => p.id)).size, 4);
+  for (const p of options) {
+    assert.equal(p.price, 25);
+    assert.equal(p.category, "bodycare");
+    assert.ok(existsSync(resolve(root, "public", p.image.slice(1))));
+    assert.equal(bagProductId(bagKey(p.id)), p.id);
+    assert.ok(buildOrderMessage("en", [{ id: p.id, p: localizeProduct(p, "en"), n: 1 }], { name: "", phone: "", address: "", notes: "", mapUrl: "" }).includes(localizeProduct(p, "en").name));
+  }
 });
 
 test("English covers all fixed Arabic UI literals and catalog notes", () => {

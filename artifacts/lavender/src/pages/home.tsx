@@ -124,6 +124,7 @@ export default function Home() {
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase();
     return products.filter((p) => {
+      if (p.hiddenFromCatalog) return false;
       const original = catalogProducts.find((item) => item.id === p.id)!;
       const en = localizeProduct(original, "en");
       const searchable = [original.name, original.short, original.description, en.name, en.short, en.description].join(" ").toLocaleLowerCase();
@@ -288,7 +289,7 @@ export default function Home() {
           ) : (
             <div className="mt-14 grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
               {list.map((p, i) => (
-                <ProductCard key={p.id} index={i} p={p} fav={favs.includes(p.id)} onFav={() => toggleFav(p.id)} onOpen={() => showProduct(p)} onAdd={() => { if (p.category === "flowers") showProduct(p); else { addToBag(p.id); setBagOpen(true); } }} />
+                <ProductCard key={p.id} index={i} p={p} fav={favs.includes(p.id)} onFav={() => toggleFav(p.id)} onOpen={() => showProduct(p)} onAdd={() => { if (p.category === "flowers" || p.variantGroup) showProduct(p); else { addToBag(p.id); setBagOpen(true); } }} />
               ))}
             </div>
           )}
@@ -346,6 +347,21 @@ export default function Home() {
                 <p className="text-xs text-muted-foreground">{categories.find((c) => c.id === open.category)?.label}</p>
                 <DialogTitle className="mt-1 font-amiri text-3xl font-normal text-primary">{open.name}</DialogTitle>
                 <DialogDescription className="mt-4 leading-loose text-foreground/75">{open.description}</DialogDescription>
+                {open.variantGroup && <fieldset className="mt-5">
+                  <legend className="mb-3 text-sm font-medium">{t("اختاري البكج — خيارات أخرى")}</legend>
+                  <div className="grid grid-cols-2 gap-2">
+                    {products.filter((p) => p.variantGroup === open.variantGroup).map((p) => (
+                      <button key={p.id} type="button" aria-pressed={p.id === open.id}
+                        onClick={() => showProduct(p)}
+                        className={`rounded-xl border-2 p-2 text-xs ${p.id === open.id ? "border-primary bg-secondary/50" : "border-transparent bg-card"}`}
+                        data-testid={`select-package-${p.id}`}>
+                        <img src={p.image} alt="" className="mb-2 h-24 w-full rounded-lg object-contain" />
+                        <span>{p.name}</span>
+                        <span className="mt-1 block text-primary">{formatProductPrice(p, 1, language)}</span>
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>}
                  {productVolumeLabel(open, language) && <p className="mt-3 text-sm text-primary">{productVolumeLabel(open, language)}</p>}
                 <ul className="mt-5 flex flex-wrap gap-2">{open.notes.map((n) => <li key={n} className="rounded-full bg-secondary px-3 py-1 text-xs text-primary">{n}</li>)}</ul>
                  <p className="mt-6 text-2xl text-primary">{formatProductPrice(open, 1, language)}</p>
