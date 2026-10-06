@@ -3,6 +3,18 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "cup-small-red-hearts": {
+    name: "Small red hearts cup", short: "White cup with small red hearts and a matching saucer",
+    description: "A white cup decorated with small red hearts, with a matching saucer.",
+  },
+  "cup-blue-hearts-bows": {
+    name: "Blue hearts & bows cup", short: "Blue hearts and pink bows with a matching saucer",
+    description: "A white cup decorated with blue hearts and pink bows, with a matching saucer.",
+  },
+  "cup-blue-clouds": {
+    name: "Blue clouds cup", short: "Blue cup with white clouds and a matching saucer",
+    description: "A blue cup decorated with white clouds, with a matching saucer.",
+  },
   "bouquet-turquoise": {
     name: "Bouquet with turquoise wrapping",
     short: "White and pink flowers with turquoise wrapping and a soft ribbon",

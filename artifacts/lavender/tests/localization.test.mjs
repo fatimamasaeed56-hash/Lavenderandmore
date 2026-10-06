@@ -61,11 +61,11 @@ test("auth starts outside an embedded preview and reports blocked tabs", () => {
   }
 });
 
-test("cup catalog contains seven unique designs at 20 ILS with real images and bilingual buy labels", () => {
+test("cup catalog contains ten unique designs at 20 ILS with real images and bilingual buy labels", () => {
   const cups = products.filter((p) => p.category === "cups");
-  assert.equal(cups.length, 7);
-  assert.equal(new Set(cups.map((p) => p.id)).size, 7);
-  assert.equal(new Set(cups.map((p) => p.image)).size, 7);
+  assert.equal(cups.length, 10);
+  assert.equal(new Set(cups.map((p) => p.id)).size, cups.length);
+  assert.equal(new Set(cups.map((p) => p.image)).size, cups.length);
   for (const p of cups) {
     assert.equal(p.price, 20);
     assert.equal(p.currency, "ILS");
