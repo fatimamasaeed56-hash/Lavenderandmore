@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Heart, Search, ShoppingBag, Menu, X, Plus, Minus, Trash2, Info, ArrowLeft, UserRound } from "lucide-react";
+import { Heart, Search, ShoppingBag, X, Plus, Minus, Trash2, Info, ArrowLeft, UserRound } from "lucide-react";
 import { Link } from "wouter";
 import { FaWhatsapp } from "react-icons/fa";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -8,6 +8,7 @@ import { products as catalogProducts, categories as catalogCategories, matchesCa
 import { localizeProduct, localizedCategories } from "@/data/localized-products";
 import { useLanguage } from "@/i18n/context";
 import { LanguageSwitch } from "@/components/language-switch";
+import { DiscoverMenu } from "@/components/discover-menu";
 import { useStore, bagProductId, bagColors, bagKey } from "@/hooks/use-store";
 import { CategoryFeedback } from "@/components/category-feedback";
 import { WhatsAppOrder } from "@/components/whatsapp-order";
@@ -100,7 +101,6 @@ export default function Home() {
   const showProduct = (p: Product) => { setOtherColors(false); setColors(""); setOpen(p); };
   const selectedBagKey = open ? bagKey(open.id, open.category === "flowers" && otherColors ? colors : "") : "";
   const [bagOpen, setBagOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [pulse, setPulse] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -148,23 +148,14 @@ export default function Home() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-5">
            <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex min-w-0 items-center gap-2 sm:gap-3" data-testid="link-home" aria-label={t("لافندر آند مور — العودة للأعلى")}>
             <img src={LOGO} alt="" className="h-9 w-9 sm:h-12 sm:w-12 rounded-full object-cover ring-1 ring-primary/20" />
-             <span className="leading-tight text-start max-[359px]:hidden">
+             <span className="hidden leading-tight text-start sm:block">
                <span className="block font-latin text-sm sm:whitespace-nowrap sm:text-xl text-primary" dir="ltr">Lavender &amp; More</span>
             </span>
           </button>
-           <nav className="hidden lg:flex items-center gap-6 text-sm" aria-label={t("التنقل الرئيسي")}>
-            {nav.map((n) => (
-              n.children ? (
-                <details key={n.id} className="relative">
-                  <summary className="cursor-pointer py-1 text-foreground/80 hover:text-primary">{n.label}</summary>
-                   <div className="absolute start-0 mt-3 w-48 rounded-2xl border border-primary/15 bg-background p-2 shadow-lg">
-                     <button onClick={(e) => { n.act(); e.currentTarget.closest("details")?.removeAttribute("open"); }} className="w-full rounded-xl px-3 py-3 text-start hover:bg-secondary">{t("كل منتجات التجميل")}</button>
-                     {n.children.map((c) => <button key={c.id} onClick={(e) => { goShop(c.id); e.currentTarget.closest("details")?.removeAttribute("open"); }} className="w-full rounded-xl px-3 py-3 text-start hover:bg-secondary">{c.label}</button>)}
-                  </div>
-                </details>
-              ) : <button key={n.id} onClick={n.act} className="relative py-1 text-foreground/80 hover:text-primary after:absolute after:bottom-0 after:start-0 after:h-px after:w-0 after:bg-primary after:transition-all hover:after:w-full">{n.label}</button>
-            ))}
-          </nav>
+          <DiscoverMenu items={nav.flatMap((n) => [
+            { id: n.id, label: n.label, act: n.act },
+            ...(n.children ?? []).map((c) => ({ id: c.id, label: c.label, act: () => goShop(c.id), nested: true })),
+          ])} />
            <div className="flex shrink-0 items-center gap-1 max-sm:[&>button]:h-8 max-sm:[&>button]:w-8 max-sm:[&>a]:h-8 max-sm:[&>a]:w-8">
              <LanguageSwitch />
              <Link href="/login" className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary" aria-label={t("تسجيل الدخول أو إنشاء حساب")} data-testid="link-account"><UserRound className="h-5 w-5 text-primary" /></Link>
@@ -177,28 +168,9 @@ export default function Home() {
               <ShoppingBag className="h-5 w-5 text-primary" />
               {count > 0 && <span className="absolute top-1 left-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] text-primary-foreground" data-testid="text-bag-count">{count}</span>}
             </button>
-             <button onClick={() => setMenuOpen(true)} className="lg:hidden grid h-10 w-10 place-items-center rounded-full hover:bg-secondary" aria-label={t("فتح القائمة")} data-testid="button-menu"><Menu className="h-5 w-5 text-primary" /></button>
           </div>
         </div>
       </header>
-
-      {/* Mobile menu */}
-      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-         <SheetContent side={language === "ar" ? "right" : "left"} className="bg-background border-primary/10 w-[85vw] max-w-sm" dir={dir}>
-           <SheetTitle className="font-ruqaa text-2xl text-primary text-start">{t("القائمة")}</SheetTitle>
-           <SheetDescription className="text-start">{t("تنقّلي بين أقسام المتجر")}</SheetDescription>
-           <div className="mt-4"><LanguageSwitch /></div>
-           <nav className="mt-8 flex flex-col gap-2" aria-label={t("قائمة الجوال")}>
-            {nav.map((n) => (
-              <div key={n.id}>
-                 <button onClick={() => { setMenuOpen(false); setTimeout(n.act, 250); }} className="w-full rounded-2xl px-4 py-3 text-start font-amiri text-2xl hover:bg-secondary">{n.label}</button>
-                 {n.children && <div className="ms-5 border-s border-primary/20 ps-3">{n.children.map((c) => <button key={c.id} onClick={() => { setMenuOpen(false); setTimeout(() => goShop(c.id), 250); }} className="block w-full rounded-xl px-3 py-2 text-start text-sm text-primary hover:bg-secondary">{c.label}</button>)}</div>}
-              </div>
-            ))}
-          </nav>
-          <img src={LOGO} alt="" className="mx-auto mt-10 h-32 w-32 rounded-full opacity-80" />
-        </SheetContent>
-      </Sheet>
 
       {/* Hero */}
       <section className="relative min-h-[100dvh] pt-24 pb-16">
