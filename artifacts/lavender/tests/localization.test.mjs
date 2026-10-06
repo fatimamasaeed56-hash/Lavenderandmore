@@ -33,6 +33,34 @@ const { localizeProduct, localizedCategories, englishProducts } = load("src/data
 const { buildOrderMessage, normalizePhone } = load("src/components/whatsapp-order.tsx");
 const { bagKey, bagColors } = load("src/hooks/use-store.ts");
 
+test("auth starts outside an embedded preview and reports blocked tabs", () => {
+  const { navigateToAuth } = load("../../lib/replit-auth-web/src/use-auth.ts");
+  const previous = globalThis.window;
+  const top = {};
+  const assigned = [];
+  const opened = [];
+  const tab = { opener: {} };
+  try {
+    globalThis.window = {
+      self: top, top,
+      location: { origin: "https://shop.example", assign: (url) => assigned.push(url) },
+      open: (url, target) => { opened.push({ url, target }); return tab; },
+    };
+    navigateToAuth("/api/login?returnTo=%2F");
+    assert.deepEqual(assigned, ["https://shop.example/api/login?returnTo=%2F"]);
+    assert.equal(opened.length, 0);
+    globalThis.window.self = {};
+    navigateToAuth("/api/login?returnTo=%2F");
+    assert.deepEqual(opened, [{ url: assigned[0], target: "_blank" }]);
+    assert.equal(tab.opener, null);
+    globalThis.window.open = () => null;
+    assert.throws(() => navigateToAuth("/api/login"), /blocked/);
+  } finally {
+    if (previous === undefined) delete globalThis.window;
+    else globalThis.window = previous;
+  }
+});
+
 test("cup catalog contains seven unique designs at 20 ILS with real images and bilingual buy labels", () => {
   const cups = products.filter((p) => p.category === "cups");
   assert.equal(cups.length, 7);

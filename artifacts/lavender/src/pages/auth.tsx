@@ -19,7 +19,7 @@ export default function AuthPage({ mode }: { mode: "login" | "signup" }) {
     try {
       action();
     } catch {
-      setError("تعذّر فتح الصفحة الآمنة. حاولي مرة أخرى.");
+      setError("تعذّر فتح صفحة الدخول. اسمحي بفتح النوافذ المنبثقة لهذا الموقع ثم حاولي مجدداً.");
     }
   }
 
@@ -98,7 +98,7 @@ export default function AuthPage({ mode }: { mode: "login" | "signup" }) {
                  {t(isSignup ? "المتابعة لإنشاء حساب" : "المتابعة لتسجيل الدخول")}
                  <ArrowLeft className="h-4 w-4 shrink-0 ltr:rotate-180" aria-hidden="true" />
               </button>
-               <p className="mt-4 text-center text-xs leading-loose text-muted-foreground">{t("لن يُطلب منكِ إدخال كلمة مرور في هذه الصفحة.")}</p>
+               <p className="mt-4 text-center text-xs leading-loose text-muted-foreground">{t("ستنتقلين إلى خدمة تسجيل الدخول الآمنة، وقد تطلب كلمة مرور حسابكِ أو طريقة تحقق أخرى. لا توجد كلمة مرور منفصلة للمتجر. عند استخدام المعاينة، تُفتح صفحة الدخول في تبويب جديد.")}</p>
               <div className="mt-7 border-t border-primary/10 pt-5 text-center text-sm leading-loose">
                  <span className="text-muted-foreground">{t(isSignup ? "لديكِ حساب بالفعل؟ " : "هذه زيارتكِ الأولى؟ ")}</span>
                  <Link href={isSignup ? "/login" : "/signup"} className={`rounded text-primary underline decoration-primary/30 underline-offset-4 ${focus}`}>{t(isSignup ? "تسجيل الدخول" : "إنشاء حساب")}</Link>

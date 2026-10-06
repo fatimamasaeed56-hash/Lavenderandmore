@@ -4,6 +4,8 @@ export const isLanguage = (value: unknown): value is Language => value === "ar" 
 
 // Arabic is the original shop copy. Only fixed UI/catalog text goes through this dictionary.
 export const english: Record<string, string> = {
+  "تعذّر فتح صفحة الدخول. اسمحي بفتح النوافذ المنبثقة لهذا الموقع ثم حاولي مجدداً.": "Could not open the sign-in page. Allow pop-ups for this site and try again.",
+  "ستنتقلين إلى خدمة تسجيل الدخول الآمنة، وقد تطلب كلمة مرور حسابكِ أو طريقة تحقق أخرى. لا توجد كلمة مرور منفصلة للمتجر. عند استخدام المعاينة، تُفتح صفحة الدخول في تبويب جديد.": "You will continue to the secure sign-in service, which may ask for your account password or another verification method. There is no separate store password. In the preview, sign-in opens in a new tab.",
   "اكتشفي": "Discover",
   "رفوفنا": "Our shelves",
   "إغلاق": "Close",

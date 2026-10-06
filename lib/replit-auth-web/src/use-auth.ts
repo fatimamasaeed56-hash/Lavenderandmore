@@ -15,6 +15,18 @@ function getBasePath() {
   return "/";
 }
 
+// Start OIDC as a first-party navigation, never inside the embedded preview.
+export function navigateToAuth(path: string) {
+  const url = new URL(path, window.location.origin).href;
+  if (window.self !== window.top) {
+    const tab = window.open(url, "_blank");
+    if (!tab) throw new Error("Auth tab blocked");
+    tab.opener = null;
+  } else {
+    window.location.assign(url);
+  }
+}
+
 export function useAuth(): AuthState {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,10 +54,10 @@ export function useAuth(): AuthState {
   }, []);
 
   const login = useCallback(() => {
-    window.location.href = `/api/login?returnTo=${encodeURIComponent(getBasePath())}`;
+    navigateToAuth(`/api/login?returnTo=${encodeURIComponent(getBasePath())}`);
   }, []);
   const logout = useCallback(() => {
-    window.location.href = `/api/logout?returnTo=${encodeURIComponent(getBasePath())}`;
+    navigateToAuth(`/api/logout?returnTo=${encodeURIComponent(getBasePath())}`);
   }, []);
 
   return { user, isLoading, isAuthenticated: !!user, login, logout };
