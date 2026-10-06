@@ -28,10 +28,6 @@ export const englishProducts: Record<string, { name: string; short: string; desc
     short: "White and pink flowers with turquoise wrapping and a soft ribbon",
     description: "The bouquet pictured with turquoise wrapping. The price is for one bouquet. To request other colors, enter your preferred colors in the box below.",
   },
-  "baby-powder-lotion": {
-    name: "Baby Powder lotion", short: "Body lotion in a pink pump bottle",
-    description: "Baby Powder body lotion as pictured. The price is for one bottle, not both bottles.",
-  },
   "body-soap": {
     name: "Body soap", short: "Soap in a container with a pink lid",
     description: "Body soap as pictured. The price is for one container, not all the containers shown.",
