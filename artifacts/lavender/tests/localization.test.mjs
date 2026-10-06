@@ -33,6 +33,21 @@ const { localizeProduct, localizedCategories, englishProducts } = load("src/data
 const { buildOrderMessage, normalizePhone } = load("src/components/whatsapp-order.tsx");
 const { bagKey, bagColors } = load("src/hooks/use-store.ts");
 
+test("cup catalog contains seven unique designs at 20 ILS with real images and bilingual buy labels", () => {
+  const cups = products.filter((p) => p.category === "cups");
+  assert.equal(cups.length, 7);
+  assert.equal(new Set(cups.map((p) => p.id)).size, 7);
+  assert.equal(new Set(cups.map((p) => p.image)).size, 7);
+  for (const p of cups) {
+    assert.equal(p.price, 20);
+    assert.equal(p.currency, "ILS");
+    assert.ok(existsSync(resolve(root, "public", p.image.slice(1))));
+    assert.equal(formatProductPrice(p, 2, "en"), "40 ILS");
+  }
+  assert.equal(translate("ar", "شراء"), "شراء");
+  assert.equal(translate("en", "شراء"), "Buy");
+});
+
 test("English covers all fixed Arabic UI literals and catalog notes", () => {
   for (const path of [
     "src/App.tsx", "src/pages/home.tsx", "src/pages/auth.tsx", "src/pages/not-found.tsx",

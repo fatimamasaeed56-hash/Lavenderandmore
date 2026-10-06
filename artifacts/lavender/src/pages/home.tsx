@@ -71,7 +71,7 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
         <p className="mt-1 text-sm text-primary" data-testid={`text-price-${p.id}`}>{formatProductPrice(p, 1, language)}</p>
         {p.perItem && <p className="mt-1 text-xs text-muted-foreground">{t("للقطعة الواحدة، وليس لكل ما في الصورة")}</p>}
         <button onClick={onAdd} className="mt-3 w-full rounded-xl border border-primary/15 bg-secondary/60 px-2 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary" data-testid={`button-add-${p.id}`}>
-          {t("أضيفي إلى الحقيبة")}
+          {t("شراء")}
         </button>
       </div>
     </article>
@@ -308,7 +308,7 @@ export default function Home() {
           ) : (
             <div className="mt-14 grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
               {list.map((p, i) => (
-                <ProductCard key={p.id} index={i} p={p} fav={favs.includes(p.id)} onFav={() => toggleFav(p.id)} onOpen={() => showProduct(p)} onAdd={() => p.category === "flowers" ? showProduct(p) : addToBag(p.id)} />
+                <ProductCard key={p.id} index={i} p={p} fav={favs.includes(p.id)} onFav={() => toggleFav(p.id)} onOpen={() => showProduct(p)} onAdd={() => { if (p.category === "flowers") showProduct(p); else { addToBag(p.id); setBagOpen(true); } }} />
               ))}
             </div>
           )}

@@ -60,6 +60,18 @@ export const englishProducts: Record<string, { name: string; short: string; desc
     name: "Powder Musk — IBRAQ", short: "Powder Musk in the supplied photo",
     description: "IBRAQ Powder Musk as shown in the supplied photo. The price is per item.",
   },
+  "cup-bows-hearts": {
+    name: "Hearts & bows cup", short: "Red hearts and brown bows on white",
+    description: "A white cup decorated with red hearts and brown bows. The price is per cup.",
+  },
+  "cup-pink-butterflies": {
+    name: "Pink butterflies cup", short: "Pink butterflies and little hearts",
+    description: "A white cup decorated with pink butterflies and little hearts. The price is per cup.",
+  },
+  "cup-pink-clouds": {
+    name: "Pink cloud cup", short: "White clouds on a pink cup",
+    description: "A pink cup decorated with white clouds. The price is per cup.",
+  },
   "cup-cherry": {
     name: "Cherry cup", short: "Red cherry illustrations and green leaves",
     description: "A white cup decorated with red cherry illustrations and green leaves.",

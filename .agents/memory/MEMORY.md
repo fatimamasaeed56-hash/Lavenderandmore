@@ -1,1 +1,2 @@
 - [Geolocation permission waits](geolocation-permissions.md) — permission prompts may remain unresolved; keep manual entry and dismissal available.
+- [Cup catalog policy](cup-catalog.md) — keep one product per cup design when receiving new photos.
