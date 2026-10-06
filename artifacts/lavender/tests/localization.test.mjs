@@ -123,7 +123,7 @@ test("perfumes have single-product images, confirmed sizes, prices and a dedupli
   assert.ok(!perfumes.some((p) => ["perfume-selection", "perfume-marshmallow"].includes(p.id)));
   for (const p of perfumes) {
     assert.equal(p.name, p.name.toUpperCase());
-    assert.doesNotMatch(p.name, /[\u0621-\u064a]/u);
+    assert.equal(localizeProduct(p, "en").name, localizeProduct(p, "en").name.toUpperCase());
     assert.equal(p.perItem ?? false, false);
     for (const photo of [p.image, ...(p.images ?? [])]) {
       assert.ok(existsSync(resolve(root, "public", photo.slice(1))), photo);
@@ -136,6 +136,8 @@ test("perfumes have single-product images, confirmed sizes, prices and a dedupli
     assert.equal(p.volumeMl, 75);
   }
   const powder = products.find((p) => p.id === "perfume-powder-musk");
+  assert.equal(products.find((p) => p.id === "perfume-fatima").name, "فاطمة");
+  assert.equal(products.find((p) => p.id === "perfume-only-you").name, "عطر ONLY YOU");
   assert.equal(powder.volumeMl, 75);
   assert.equal(powder.images.length, 2);
   assert.equal(powder.images[0], powder.image);

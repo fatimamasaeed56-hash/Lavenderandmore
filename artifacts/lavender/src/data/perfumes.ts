@@ -34,9 +34,9 @@ export const perfumeProducts: Product[] = rows.map(([id, name, englishName, volu
   const newPhoto = image(`perfume-${photo}.jpeg`);
   const primary = id === "powder-musk" ? image("perfume-powder-musk.jpeg") : newPhoto;
   return {
-    id: `perfume-${id}`, name: englishName.toUpperCase(), englishName: englishName.toUpperCase(), category: "perfumes", volumeMl, price,
+    id: `perfume-${id}`, name: name.toUpperCase(), englishName: englishName.toUpperCase(), category: "perfumes", volumeMl, price,
     currency: "ILS", actualPrice: true, suppliedPhoto: true,
     image: primary, images: primary === newPhoto ? [primary] : [primary, newPhoto],
-    short: englishName.toUpperCase(), description: englishName.toUpperCase(), notes: [],
+    short: name.toUpperCase(), description: name.toUpperCase(), notes: [],
   };
 });

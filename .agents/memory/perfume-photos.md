@@ -16,8 +16,8 @@ For the four Lattafa perfumes, display the name, volume (75 ml), and price (55 I
 
 **How to apply:** Keep Cookie Crave, Vanilla Freak, Whipped Pleasure, and Berry On Top individually labeled on catalog cards.
 
-Write all perfume names in English uppercase.
+Keep Arabic perfume names in Arabic; uppercase only English letters in names.
 
-**Why:** The owner requested English CAPITAL names.
+**Why:** The owner clarified that CAPITAL applies only to English, not translating Arabic names into English.
 
-**How to apply:** Apply this to perfume names throughout the store, including the Arabic interface.
+**How to apply:** Preserve Arabic catalog names and uppercase their Latin text. English-interface translations should also use uppercase names.
