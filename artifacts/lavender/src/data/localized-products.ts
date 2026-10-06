@@ -92,6 +92,7 @@ export const englishProducts: Record<string, { name: string; short: string; desc
 
 export function localizeProduct(product: Product, language: Language): Product {
   if (language === "ar") return product;
+  if (product.englishName) return { ...product, name: product.englishName, short: product.englishName, description: product.englishName };
   const copy = englishProducts[product.id];
   if (!copy) throw new Error(`Missing English catalog translation: ${product.id}`);
   return { ...product, ...copy, notes: product.notes.map((note) => translate(language, note)) };

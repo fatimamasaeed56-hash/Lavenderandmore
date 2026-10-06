@@ -8,6 +8,7 @@ import { products as catalogProducts, categories as catalogCategories, matchesCa
 import { localizeProduct, localizedCategories } from "@/data/localized-products";
 import { useLanguage } from "@/i18n/context";
 import { LanguageSwitch } from "@/components/language-switch";
+import { ProductGallery } from "@/components/product-gallery";
 import { DiscoverMenu } from "@/components/discover-menu";
 import { useStore, bagProductId, bagColors, bagKey } from "@/hooks/use-store";
 import { CategoryFeedback } from "@/components/category-feedback";
@@ -55,6 +56,7 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
   const { t, language } = useLanguage();
   const categories = localizedCategories(language);
   const cat = categories.find((c) => c.id === p.category)?.label;
+  const minimalCard = ["perfume-cookie-crave", "perfume-vanilla-freak", "perfume-whipped-pleasure", "perfume-berry-on-top"].includes(p.id);
   return (
     <article className="group reveal" style={{ transitionDelay: `${(index % 4) * 80}ms` }} data-testid={`card-product-${p.id}`}>
       <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-card shadow-[0_12px_30px_-24px_hsl(289_32%_30%/0.35)]">
@@ -66,9 +68,9 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
         </button>
       </div>
       <div className="px-2 pt-4 text-center">
-        <p className="text-xs tracking-wide text-muted-foreground">{cat}</p>
-        <h3 className="font-amiri text-xl text-foreground mt-1">{p.name}</h3>
-        {productVolumeLabel(p, language) && <p className="mt-2 text-sm text-muted-foreground" data-testid={`text-volume-${p.id}`}>{productVolumeLabel(p, language)}</p>}
+        {!minimalCard && <p className="text-xs tracking-wide text-muted-foreground">{cat}</p>}
+        <h3 className={minimalCard ? "sr-only" : "font-amiri text-xl text-foreground mt-1"}>{p.name}</h3>
+        {!minimalCard && productVolumeLabel(p, language) && <p className="mt-2 text-sm text-muted-foreground" data-testid={`text-volume-${p.id}`}>{productVolumeLabel(p, language)}</p>}
         <p className="mt-1 text-sm text-primary" data-testid={`text-price-${p.id}`}>{formatProductPrice(p, 1, language)}</p>
         {p.perItem && <p className="mt-1 text-xs text-muted-foreground">{t("للقطعة الواحدة، وليس لكل ما في الصورة")}</p>}
         <button onClick={onAdd} className="mt-3 w-full rounded-xl border border-primary/15 bg-secondary/60 px-2 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary" data-testid={`button-add-${p.id}`}>
@@ -338,7 +340,7 @@ export default function Home() {
          <DialogContent className="max-w-3xl max-h-[90dvh] overflow-y-auto rounded-[32px] border-primary/10 bg-background p-0 [&>button]:start-auto [&>button]:end-4" dir={dir}>
           {open && (
             <div className="grid md:grid-cols-2">
-              <img src={open.image} alt={open.name} className={`h-64 w-full ${open.actualPrice || open.suppliedPhoto ? "object-contain" : "object-cover"} md:h-full`} />
+              <ProductGallery key={open.id} product={open} language={language} />
                <div className="p-8 text-start">
                  <div className="mb-4"><LanguageSwitch /></div>
                 <p className="text-xs text-muted-foreground">{categories.find((c) => c.id === open.category)?.label}</p>

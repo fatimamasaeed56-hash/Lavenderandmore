@@ -1,4 +1,5 @@
 import { translate, type Language } from "@/i18n/messages";
+import { perfumeProducts } from "./perfumes";
 
 export type Category = "cups" | "perfumes" | "beauty" | "cosmetics" | "bodycare" | "flowers" | "printing";
 
@@ -12,6 +13,9 @@ export interface Product {
   perItem?: boolean;
   currency?: "ILS";
   image: string;
+  images?: string[];
+  volumeMl?: number;
+  englishName?: string;
   short: string;
   description: string;
   notes: string[];
@@ -27,7 +31,7 @@ const confirmedVolumesMl: Record<string, number> = {
   "perfume-powder-musk": 50,
 };
 export const productVolumeLabel = (product: Product, language: Language = "ar") =>
-  confirmedVolumesMl[product.id] ? `${translate(language, "حجم العبوة")}: ${confirmedVolumesMl[product.id]} ${translate(language, "مل")}` : "";
+  (product.volumeMl ?? confirmedVolumesMl[product.id]) ? `${translate(language, "حجم العبوة")}: ${product.volumeMl ?? confirmedVolumesMl[product.id]} ${translate(language, "مل")}` : "";
 
 export const categories: { id: Category | "all"; label: string; hint: string; parent?: Category }[] = [
   { id: "all", label: "الكل", hint: "كل ما في الرفوف" },
@@ -46,7 +50,7 @@ export const matchesCategory = (product: Product, category: Category | "all") =>
   category === "all" || product.category === category ||
   categories.some((c) => c.id === product.category && c.parent === category);
 
-export const products: Product[] = [
+const originalProducts: Product[] = [
   { id: "bouquet-turquoise", name: "باقة ورد بتغليف تركواز", category: "flowers", price: 80, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/bouquet-turquoise.jpeg`, short: "ورد أبيض وزهري بتغليف تركواز وشريط ناعم", description: "باقة الورد الظاهرة في الصورة بتغليف تركواز. السعر للباقة الواحدة. لاختيار ألوان أخرى، اكتبي الألوان المطلوبة في المربع أدناه.", notes: ["للباقة الواحدة", "إمكانية طلب ألوان أخرى"] },
   { id: "baby-powder-lotion", name: "لوشن بيبي باودر", category: "bodycare", price: 20, actualPrice: true, suppliedPhoto: true, perItem: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/baby-powder-lotion.jpeg`, short: "لوشن للجسم بعبوة وردية ومضخة", description: "لوشن بيبي باودر للجسم كما يظهر في الصورة. السعر لعبوة واحدة وليس للعبوتين.", notes: ["للعبوة الواحدة"] },
   { id: "body-soap", name: "صابون الجسم", category: "bodycare", price: 25, actualPrice: true, suppliedPhoto: true, perItem: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/body-soap.jpeg`, short: "صابون في علبة بغطاء وردي", description: "صابون الجسم كما يظهر في الصورة. السعر لعلبة واحدة وليس لجميع العلب الظاهرة.", notes: ["للعلبة الواحدة"] },
@@ -68,6 +72,14 @@ export const products: Product[] = [
   { id: "cup-pink-heart", name: "كوب قلب زهر", category: "cups", price: 20, actualPrice: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/cup-pink-heart.jpeg`, short: "قلوب زهرية على خلفية بيضاء", description: "كوب أبيض تزيّنه قلوب بلون زهري فاتح.", notes: ["قلوب زهرية", "لون أبيض"] },
   { id: "cup-red-heart", name: "كوب قلب أحمر", category: "cups", price: 20, actualPrice: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/cup-red-heart.jpeg`, short: "قلوب حمراء على خلفية بيضاء", description: "كوب أبيض تزيّنه قلوب حمراء موزّعة على سطحه.", notes: ["قلوب حمراء", "لون أبيض"] },
   { id: "cup-hearts-pink-band", name: "كوب قلوب وشريط زهري", category: "cups", price: 20, actualPrice: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/cup-hearts-pink-band.jpeg`, short: "قلوب حمراء وشريط زهري حول الكوب", description: "كوب أبيض بتصميم قلوب حمراء وشريط زهري مرسوم حول الجزء السفلي.", notes: ["قلوب حمراء", "شريط زهري مرسوم"] },
+];
+
+export const products: Product[] = [
+  ...originalProducts.filter((p) => p.category !== "perfumes"),
+  ...perfumeProducts,
+  ...originalProducts.filter((p) => p.id === "perfume-white-musk").map((p) => ({
+    ...p, perItem: false, notes: [], short: "مسك أبيض — IBRAQ", description: "مسك أبيض — IBRAQ",
+  })),
 ];
 
 export const formatPrice = (n: number, language: Language = "ar") => `${n.toLocaleString(language === "ar" ? "ar-EG" : "en")}`;

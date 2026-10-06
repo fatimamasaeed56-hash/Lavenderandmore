@@ -103,7 +103,7 @@ test("English covers all fixed Arabic UI literals and catalog notes", () => {
 
 test("catalog localization is complete, reversible and does not mutate commerce data", () => {
   const before = JSON.stringify(products);
-  assert.equal(Object.keys(englishProducts).length, products.length);
+  assert.ok(products.every((p) => p.englishName || englishProducts[p.id]), "Every active product has English copy");
   for (const p of products) {
     const en = localizeProduct(p, "en");
     for (const key of ["id", "category", "price", "image", "currency", "perItem"]) assert.equal(en[key], p[key]);
@@ -114,7 +114,29 @@ test("catalog localization is complete, reversible and does not mutate commerce 
   }
   assert.equal(JSON.stringify(products), before);
   assert.deepEqual(localizedCategories("ar").map((c) => c.label), categories.map((c) => c.label));
-  assert.equal(productVolumeLabel(products.find((p) => p.id === "perfume-only-you"), "en"), "Bottle size: 50 ml");
+  assert.equal(productVolumeLabel(products.find((p) => p.id === "perfume-only-you"), "en"), "Bottle size: 30 ml");
+});
+
+test("perfumes have single-product images, confirmed sizes, prices and a deduplicated gallery", () => {
+  const perfumes = products.filter((p) => p.category === "perfumes");
+  assert.equal(new Set(perfumes.map((p) => p.id)).size, perfumes.length);
+  assert.ok(!perfumes.some((p) => ["perfume-selection", "perfume-marshmallow"].includes(p.id)));
+  for (const p of perfumes) {
+    assert.equal(p.perItem ?? false, false);
+    for (const photo of [p.image, ...(p.images ?? [])]) {
+      assert.ok(existsSync(resolve(root, "public", photo.slice(1))), photo);
+    }
+    assert.equal(new Set(p.images).size, p.images?.length ?? 0);
+  }
+  for (const id of ["cookie-crave", "vanilla-freak", "whipped-pleasure", "berry-on-top"]) {
+    const p = products.find((p) => p.id === `perfume-${id}`);
+    assert.equal(p.price, 55);
+    assert.equal(p.volumeMl, 75);
+  }
+  const powder = products.find((p) => p.id === "perfume-powder-musk");
+  assert.equal(powder.volumeMl, 75);
+  assert.equal(powder.images.length, 2);
+  assert.equal(powder.images[0], powder.image);
 });
 
 test("WhatsApp fixed text follows the language while customer text, colors and actual totals stay intact", () => {
