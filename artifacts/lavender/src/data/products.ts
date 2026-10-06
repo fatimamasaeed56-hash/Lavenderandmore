@@ -78,7 +78,8 @@ export const products: Product[] = [
   ...originalProducts.filter((p) => p.category !== "perfumes"),
   ...perfumeProducts,
   ...originalProducts.filter((p) => p.id === "perfume-white-musk").map((p) => ({
-    ...p, perItem: false, notes: [], short: "مسك أبيض — IBRAQ", description: "مسك أبيض — IBRAQ",
+    ...p, name: "WHITE MUSK — IBRAQ", englishName: "WHITE MUSK — IBRAQ",
+    perItem: false, notes: [], short: "WHITE MUSK — IBRAQ", description: "WHITE MUSK — IBRAQ",
   })),
 ];
 

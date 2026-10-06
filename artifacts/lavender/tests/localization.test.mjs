@@ -122,6 +122,8 @@ test("perfumes have single-product images, confirmed sizes, prices and a dedupli
   assert.equal(new Set(perfumes.map((p) => p.id)).size, perfumes.length);
   assert.ok(!perfumes.some((p) => ["perfume-selection", "perfume-marshmallow"].includes(p.id)));
   for (const p of perfumes) {
+    assert.equal(p.name, p.name.toUpperCase());
+    assert.doesNotMatch(p.name, /[\u0621-\u064a]/u);
     assert.equal(p.perItem ?? false, false);
     for (const photo of [p.image, ...(p.images ?? [])]) {
       assert.ok(existsSync(resolve(root, "public", photo.slice(1))), photo);
