@@ -53,6 +53,8 @@ export const matchesCategory = (product: Product, category: Category | "all") =>
   categories.some((c) => c.id === product.category && c.parent === category);
 
 const originalProducts: Product[] = [
+  { id: "essence-extreme-mascara", name: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA", category: "cosmetics", price: 10, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/essence-extreme-mascara.jpeg`, short: "ماسكارا ESSENCE", description: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA بالعبوة الوردية الظاهرة في الصورة.", notes: [] },
+  { id: "lip-tint", name: "تنت — LIP TINT", category: "cosmetics", price: 2, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/lip-tint.jpeg`, short: "تنت للشفاه", description: "تنت للشفاه بالعبوات الظاهرة في الصورة.", notes: [] },
   { id: "rose-water", name: "ماء الورد — LUENCO", category: "cosmetics", price: 10, volumeMl: 300, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/rose-water.jpeg`, short: "ماء الورد بعبوة ٣٠٠ مل", description: "ماء الورد LUENCO بالأنواع الظاهرة في الصورة.", notes: [] },
   { id: "contour-palette", name: "ROMANTIC COLOR — MAKEUP PLATE", category: "cosmetics", price: 5, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/contour-palette.jpeg`, short: "باليت كونتور بدرجات متعددة", description: "باليت كونتور ROMANTIC COLOR — MAKEUP PLATE، رقم RC5124.", notes: [] },
   { id: "cup-small-red-hearts", name: "كوب قلوب حمراء صغيرة", category: "cups", price: 20, actualPrice: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/cup-small-red-hearts.jpeg`, short: "كوب أبيض بقلوب حمراء صغيرة مع صحن مطابق", description: "كوب أبيض مزين بقلوب حمراء صغيرة، مع صحن بنفس التصميم.", notes: [] },
@@ -82,6 +84,17 @@ const originalProducts: Product[] = [
 ];
 
 export const products: Product[] = [
+  ...[277, 281, 209, 245, 231].map((shade, index): Product => ({
+    id: `lip-liner-${shade}`,
+    name: `EVER BEAUTY MATTE PENCIL LIPSTICK — ${shade}`,
+    englishName: `EVER BEAUTY MATTE PENCIL LIPSTICK — ${shade}`,
+    category: "cosmetics", price: 3, actualPrice: true, suppliedPhoto: true, currency: "ILS",
+    variantGroup: "lip-liner-shades", hiddenFromCatalog: index !== 0,
+    image: `${import.meta.env.BASE_URL}images/lip-liner.jpeg`,
+    short: `ليب لاينر — درجة ${shade}`,
+    description: `EVER BEAUTY MATTE PENCIL LIPSTICK — درجة ${shade}`,
+    notes: [],
+  })),
   ...originalProducts.filter((p) => p.category !== "perfumes"),
   ...perfumeProducts,
   ...originalProducts.filter((p) => p.id === "perfume-white-musk").map((p) => ({

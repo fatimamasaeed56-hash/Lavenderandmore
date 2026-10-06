@@ -3,6 +3,14 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "essence-extreme-mascara": {
+    name: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA", short: "ESSENCE mascara",
+    description: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA in the pink packaging pictured.",
+  },
+  "lip-tint": {
+    name: "LIP TINT", short: "Lip tint",
+    description: "Lip tint in the bottles pictured.",
+  },
   "rose-water": {
     name: "LUENCO Rose Water", short: "Rose water in a 300 ml bottle",
     description: "LUENCO Rose Water in the varieties pictured.",

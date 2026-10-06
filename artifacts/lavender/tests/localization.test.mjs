@@ -77,13 +77,27 @@ test("cup catalog contains ten unique designs at 20 ILS with real images and bil
 });
 
 test("cosmetics contains only the replacement products with per-item pricing", () => {
-  const cosmetics = products.filter((p) => p.category === "cosmetics");
-  assert.deepEqual(cosmetics.map((p) => p.id).sort(), ["contour-palette", "liquid-lipstick", "rose-water"]);
+  const cosmetics = products.filter((p) => p.category === "cosmetics" && p.variantGroup !== "lip-liner-shades");
+  const prices = { "contour-palette": 5, "essence-extreme-mascara": 10, "lip-tint": 2, "liquid-lipstick": 5, "rose-water": 10 };
+  assert.deepEqual(cosmetics.map((p) => p.id).sort(), Object.keys(prices).sort());
   for (const p of cosmetics) {
-    assert.equal(p.price, p.id === "rose-water" ? 10 : 5);
+    assert.equal(p.price, prices[p.id]);
     assert.equal(p.perItem ?? false, false);
   }
   assert.ok(!products.some((p) => ["blush", "lipstick-stick"].includes(p.id)));
+});
+
+test("lip liner shades are individually orderable at 3 ILS with one catalog card", () => {
+  const shades = products.filter((p) => p.variantGroup === "lip-liner-shades");
+  assert.deepEqual(shades.map((p) => p.id), [277, 281, 209, 245, 231].map((shade) => `lip-liner-${shade}`));
+  assert.equal(shades.filter((p) => !p.hiddenFromCatalog).length, 1);
+  for (const p of shades) {
+    assert.equal(p.price, 3);
+    assert.equal(p.category, "cosmetics");
+    assert.ok(existsSync(resolve(root, "public", p.image.slice(1))));
+    assert.equal(bagProductId(bagKey(p.id)), p.id);
+    assert.ok(buildOrderMessage("en", [{ id: p.id, p: localizeProduct(p, "en"), n: 1 }], { name: "", phone: "", address: "", notes: "", mapUrl: "" }).includes(p.englishName));
+  }
 });
 
 test("body care packages have one catalog card and four independently orderable options", () => {

@@ -348,7 +348,7 @@ export default function Home() {
                 <DialogTitle className="mt-1 font-amiri text-3xl font-normal text-primary">{open.name}</DialogTitle>
                 <DialogDescription className="mt-4 leading-loose text-foreground/75">{open.description}</DialogDescription>
                 {open.variantGroup && <fieldset className="mt-5">
-                  <legend className="mb-3 text-sm font-medium">{t("اختاري البكج — خيارات أخرى")}</legend>
+                  <legend className="mb-3 text-sm font-medium">{t(open.variantGroup === "lip-liner-shades" ? "اختاري الدرجة" : "اختاري البكج — خيارات أخرى")}</legend>
                   <div className="grid grid-cols-2 gap-2">
                     {products.filter((p) => p.variantGroup === open.variantGroup).map((p) => (
                       <button key={p.id} type="button" aria-pressed={p.id === open.id}
