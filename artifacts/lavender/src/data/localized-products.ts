@@ -3,6 +3,14 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "rose-water": {
+    name: "LUENCO Rose Water", short: "Rose water in a 300 ml bottle",
+    description: "LUENCO Rose Water in the varieties pictured.",
+  },
+  "contour-palette": {
+    name: "ROMANTIC COLOR — MAKEUP PLATE", short: "Contour palette with multiple shades",
+    description: "ROMANTIC COLOR — MAKEUP PLATE contour palette, RC5124.",
+  },
   "cup-small-red-hearts": {
     name: "Small red hearts cup", short: "White cup with small red hearts and a matching saucer",
     description: "A white cup decorated with small red hearts, with a matching saucer.",
@@ -37,16 +45,8 @@ export const englishProducts: Record<string, { name: string; short: string; desc
     description: "The Candy, Sweet and Gummy body lotion selection pictured. The price is for one bottle, not the whole selection.",
   },
   "liquid-lipstick": {
-    name: "Liquid lipstick", short: "Liquid lipstick in various colors",
-    description: "Liquid lipstick as pictured. The price is per item, not the whole selection.",
-  },
-  "lipstick-stick": {
-    name: "Lipstick", short: "Lipstick in various colors",
-    description: "Lipstick as pictured. The price is per item, not all the lipsticks shown.",
-  },
-  "blush": {
-    name: "Blush", short: "Blush in a small compact",
-    description: "Blush as pictured. The price is per item, not the entire display box.",
+    name: "GOLDEN ROSE — LONGSTAY LIQUID MATTE LIPSTICK", short: "Liquid matte lipstick in various colors",
+    description: "GOLDEN ROSE — LONGSTAY LIQUID MATTE LIPSTICK.",
   },
   "perfume-qissa": {
     name: "Qissa perfumes", short: "Qissa perfume selection in the supplied photo",

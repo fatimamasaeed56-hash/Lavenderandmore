@@ -76,6 +76,16 @@ test("cup catalog contains ten unique designs at 20 ILS with real images and bil
   assert.equal(translate("en", "شراء"), "Buy");
 });
 
+test("cosmetics contains only the replacement products with per-item pricing", () => {
+  const cosmetics = products.filter((p) => p.category === "cosmetics");
+  assert.deepEqual(cosmetics.map((p) => p.id).sort(), ["contour-palette", "liquid-lipstick", "rose-water"]);
+  for (const p of cosmetics) {
+    assert.equal(p.price, p.id === "rose-water" ? 10 : 5);
+    assert.equal(p.perItem ?? false, false);
+  }
+  assert.ok(!products.some((p) => ["blush", "lipstick-stick"].includes(p.id)));
+});
+
 test("English covers all fixed Arabic UI literals and catalog notes", () => {
   for (const path of [
     "src/App.tsx", "src/pages/home.tsx", "src/pages/auth.tsx", "src/pages/not-found.tsx",

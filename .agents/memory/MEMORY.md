@@ -2,3 +2,4 @@
 - [Cup catalog policy](cup-catalog.md) — keep one product per cup design when receiving new photos.
 - [Perfume photo policy](perfume-photos.md) — alternate angles belong to the same product; show the second in details.
 - [Preview diagnostics](preview-diagnostics.md) — stale server processes and mid-animation captures can mislead navigation diagnosis.
+- [Cosmetics labels](cosmetics-labels.md) — use packaging names and plain prices without per-item wording.
