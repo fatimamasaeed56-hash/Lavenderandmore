@@ -21,3 +21,9 @@ Keep Arabic perfume names in Arabic; uppercase only English letters in names.
 **Why:** The owner clarified that CAPITAL applies only to English, not translating Arabic names into English.
 
 **How to apply:** Preserve Arabic catalog names and uppercase their Latin text. English-interface translations should also use uppercase names.
+
+The pink box with a woman and leopard is Laverne Georgina, not INASS.
+
+**Why:** The owner corrected the image identification; the stylized lettering was misread.
+
+**How to apply:** Match future alternate photos of that packaging to Laverne Georgina, not a separate INASS product.

@@ -3,8 +3,9 @@ import type { Product } from "./products";
 const image = (filename: string) => `${import.meta.env.BASE_URL}images/${filename}`;
 type PerfumeRow = [id: string, name: string, englishName: string, volume: number, price: number, photo: string];
 
-// Owner-confirmed catalog. OPERA, Laverne and INASS await a verified photo or price.
+// Owner-confirmed catalog. OPERA awaits a verified photo.
 const rows: PerfumeRow[] = [
+  ["inass", "لافيرن جورجينا", "LAVERNE GEORGINA", 100, 45, "0139"],
   ["is", "iS Eau de Parfum", "iS Eau de Parfum", 100, 45, "0137"],
   ["fatima", "فاطمة", "Fatima", 100, 45, "0108"],
   ["hareem", "حريم السلطان", "Hareem Al Sultan", 100, 45, "0119"],
