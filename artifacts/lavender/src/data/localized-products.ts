@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "body-razors": {
+    name: "Body razors", short: "Pink body razors",
+    description: "Body razors in the packaging pictured.",
+  },
   "baby-powder-magic-scrub": {
     name: "LUENCO BABY POWDER MAGIC — SCRUB", short: "Scrub in a 200 ml container",
     description: "LUENCO BABY POWDER MAGIC scrub in the pictured 200 ml container.",

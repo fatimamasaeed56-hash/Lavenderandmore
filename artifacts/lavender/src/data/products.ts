@@ -53,6 +53,7 @@ export const matchesCategory = (product: Product, category: Category | "all") =>
   categories.some((c) => c.id === product.category && c.parent === category);
 
 const originalProducts: Product[] = [
+  { id: "body-razors", name: "شفرات للجسم", category: "bodycare", price: 10, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/body-razors.jpeg`, short: "شفرات للجسم باللون الزهري", description: "شفرات للجسم بالعبوة الظاهرة في الصورة.", notes: [] },
   { id: "baby-powder-magic-scrub", name: "مقشر ومبيض للوجه والجسم", category: "bodycare", price: 7, volumeMl: 200, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/baby-powder-magic-scrub.jpeg`, short: "مقشر ومبيض للوجه والجسم — ٢٠٠ مل", description: "مقشر ومبيض للوجه والجسم كما هو مكتوب على العبوة، حجم ٢٠٠ مل.", notes: [] },
   { id: "essence-extreme-mascara", name: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA", category: "cosmetics", price: 10, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/essence-extreme-mascara.jpeg`, short: "ماسكارا ESSENCE", description: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA بالعبوة الوردية الظاهرة في الصورة.", notes: [] },
   { id: "lip-tint", name: "تنت — LIP TINT", category: "cosmetics", price: 2, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/lip-tint.jpeg`, short: "تنت للشفاه", description: "تنت للشفاه بالعبوات الظاهرة في الصورة.", notes: [] },
