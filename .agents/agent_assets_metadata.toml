@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "PSUUyrprqskUsq7cM2Tki"
+uri = "file://attached_assets/lotion-sweet-white-sample.jpg"
+type = "image"
+title = "لوشن سويت — تجربة الخلفية البيضاء"
+description = "إزالة الخلفية والزينة مع إبقاء العبوة وكتابتها. لم تتغير صورة المتجر."
+logical_id = "2c802377-3317-4664-9416-afa555518013"
+content_hash = "sha256:a41f9e21423ec6bba7e3eb45e8aed31dc3a2594082bb543f7bc60cb47a4bda2f"
+size = 96802
+mtime_ms = 1791381458805
+storage_uri = "gcs://replit-rams-assets-reed/rams/assets/repl:eb209a6e-8a26-4b04-bae6-6ea85d793f17/2c802377-3317-4664-9416-afa555518013/c7e94d7f-9210-4041-b324-6cd679de5608"
+storage_version_token = "1791381467308119"
+content_type = "image/jpeg"
