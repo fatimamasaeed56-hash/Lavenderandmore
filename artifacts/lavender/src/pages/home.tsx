@@ -147,6 +147,12 @@ export default function Home() {
     <div className="min-h-[100dvh] overflow-x-hidden">
       {/* Header */}
       <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${scrolled ? "bg-background/85 backdrop-blur-md shadow-[0_1px_0_hsl(var(--border))]" : "bg-transparent"}`}>
+        <a href="https://www.instagram.com/lavender._.more/" target="_blank" rel="noopener noreferrer" data-testid="header-instagram"
+          className="flex min-h-12 w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-gradient-to-r from-[#7133A1] via-[#B32976] to-[#AE3D27] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white">
+          <Instagram className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <span>{t("تابعينا على إنستغرام")}</span>
+          <span dir="ltr">@lavender._.more</span>
+        </a>
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-3 py-3 sm:flex-nowrap sm:gap-4 sm:px-5">
            <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex min-w-0 items-center gap-2 sm:gap-3" data-testid="link-home" aria-label={t("لافندر آند مور — العودة للأعلى")}>
             <img src={LOGO} alt="" className="h-9 w-9 sm:h-12 sm:w-12 rounded-full object-cover ring-1 ring-primary/20" />
@@ -182,7 +188,7 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <section className="relative min-h-[100dvh] pt-24 pb-16">
+      <section className="relative min-h-[100dvh] pt-40 pb-16">
         <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-accent/50 blur-3xl" aria-hidden />
         <div className="absolute bottom-0 right-0 h-[380px] w-[380px] rounded-full bg-[hsl(340_50%_90%)] blur-3xl" aria-hidden />
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 lg:grid-cols-[1.05fr_1fr]">
