@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "baby-powder-magic-scrub": {
+    name: "LUENCO BABY POWDER MAGIC — SCRUB", short: "Scrub in a 200 ml container",
+    description: "LUENCO BABY POWDER MAGIC scrub in the pictured 200 ml container.",
+  },
   "essence-extreme-mascara": {
     name: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA", short: "ESSENCE mascara",
     description: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA in the pink packaging pictured.",

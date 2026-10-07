@@ -53,6 +53,7 @@ export const matchesCategory = (product: Product, category: Category | "all") =>
   categories.some((c) => c.id === product.category && c.parent === category);
 
 const originalProducts: Product[] = [
+  { id: "baby-powder-magic-scrub", name: "LUENCO BABY POWDER MAGIC — مقشر", category: "bodycare", price: 7, volumeMl: 200, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/baby-powder-magic-scrub.jpeg`, short: "مقشر بعبوة ٢٠٠ مل", description: "مقشر LUENCO BABY POWDER MAGIC بالعبوة الظاهرة في الصورة، حجم ٢٠٠ مل.", notes: [] },
   { id: "essence-extreme-mascara", name: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA", category: "cosmetics", price: 10, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/essence-extreme-mascara.jpeg`, short: "ماسكارا ESSENCE", description: "ESSENCE I LOVE EXTREME CRAZY VOLUME MASCARA بالعبوة الوردية الظاهرة في الصورة.", notes: [] },
   { id: "lip-tint", name: "تنت — LIP TINT", category: "cosmetics", price: 2, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/lip-tint.jpeg`, short: "تنت للشفاه", description: "تنت للشفاه بالعبوات الظاهرة في الصورة.", notes: [] },
   { id: "rose-water", name: "ماء الورد — LUENCO", category: "cosmetics", price: 10, volumeMl: 300, actualPrice: true, suppliedPhoto: true, currency: "ILS", image: `${import.meta.env.BASE_URL}images/rose-water.jpeg`, short: "ماء الورد بعبوة ٣٠٠ مل", description: "ماء الورد LUENCO بالأنواع الظاهرة في الصورة.", notes: [] },
