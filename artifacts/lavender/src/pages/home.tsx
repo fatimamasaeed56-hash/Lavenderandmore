@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Heart, Search, ShoppingBag, X, Plus, Minus, Trash2, Info, ArrowLeft, UserRound } from "lucide-react";
+import { Heart, Search, ShoppingBag, X, Plus, Minus, Trash2, Info, ArrowLeft, UserRound, Instagram } from "lucide-react";
 import { Link } from "wouter";
 import { FaWhatsapp } from "react-icons/fa";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -199,6 +199,10 @@ export default function Home() {
               </button>
                <button onClick={() => goShop("all")} className="rounded-full border border-primary/30 px-8 py-4 text-primary transition-colors hover:bg-secondary" data-testid="button-hero-all">{t("تصفّحي الأقسام")}</button>
             </div>
+            <a href="https://www.instagram.com/lavender._.more/" target="_blank" rel="noopener noreferrer" data-testid="hero-instagram" className="mt-5 inline-flex items-center gap-3 rounded-2xl border border-primary/25 bg-card px-5 py-3 text-primary shadow-sm transition-colors hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+              <Instagram className="h-6 w-6 shrink-0" aria-hidden="true" />
+              <span className="text-start"><span className="block font-semibold">{t("تابعينا على إنستغرام")}</span><span className="block text-sm" dir="ltr">@lavender._.more</span></span>
+            </a>
           </div>
           <div className="rise relative mx-auto w-full max-w-lg" style={{ animationDelay: "350ms" }}>
             <div className="overflow-hidden rounded-full shadow-[0_40px_80px_-40px_hsl(289_32%_30%/0.6)]">
@@ -326,6 +330,11 @@ export default function Home() {
           <p className="font-latin text-2xl text-primary" dir="ltr">Lavender &amp; More</p>
           <p className="font-latin text-muted-foreground" dir="ltr">Once a dream, now a reality.</p>
            <p className="text-primary">{t("موقعنا فلسطين — متوفر التوصيل")}</p>
+           <a href="https://www.instagram.com/lavender._.more/" target="_blank" rel="noopener noreferrer" data-testid="footer-instagram" className="inline-flex flex-wrap items-center justify-center gap-3 rounded-full bg-primary px-6 py-3 text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+             <Instagram className="h-5 w-5" aria-hidden="true" />
+             <span>{t("تابعينا على إنستغرام")}</span>
+             <span dir="ltr">@lavender._.more</span>
+           </a>
            <p className="text-sm text-muted-foreground">{t("للتواصل والاستفسار عبر واتساب")}</p>
            <a href="https://wa.me/972593860029" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 rounded-full border border-primary/20 px-6 py-3 text-primary transition-colors hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" aria-label={t("تواصل معنا على واتساب على الرقم +972593860029")} data-testid="footer-whatsapp">
             <FaWhatsapp className="h-6 w-6 text-[#128C7E]" aria-hidden="true" />
