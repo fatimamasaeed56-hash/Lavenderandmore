@@ -54,7 +54,7 @@ export const englishProducts: Record<string, { name: string; short: string; desc
   },
   "candy-lotion": {
     name: "Candy, Sweet & Gummy body lotion", short: "Body lotion in white bottles with gold caps",
-    description: "The Candy, Sweet and Gummy body lotion selection pictured. The price is for one bottle, not the whole selection.",
+    description: "Sweet, Candy and Gummy body lotion. Browse the photos in the details to see all three varieties.",
   },
   "liquid-lipstick": {
     name: "GOLDEN ROSE — LONGSTAY LIQUID MATTE LIPSTICK", short: "Liquid matte lipstick in various colors",
