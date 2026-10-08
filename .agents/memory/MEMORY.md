@@ -5,3 +5,4 @@
 - [Cosmetics labels](cosmetics-labels.md) — use packaging names and plain prices without per-item wording.
 - [Body care packages](bodycare-packages.md) — show a single catalog card; offer the other packages inside its details.
 - [Lotion photos](lotion-photos.md) — Sweet, Candy and Gummy share one catalog card with a detail gallery.
+- [Persistent login](persistent-login.md) — returning customers should stay signed in; use secure rolling sessions, never saved passwords.

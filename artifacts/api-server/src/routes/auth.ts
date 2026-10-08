@@ -1,16 +1,18 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import * as oidc from "openid-client";
-import { clearSession, createSession, getOidcConfig, getSessionId, SESSION_COOKIE, SESSION_TTL, upsertUser } from "../lib/auth";
+import { clearSession, createSession, getOidcConfig, getSession, getSessionId, SESSION_COOKIE, SESSION_TTL, sessionCookieOptions, upsertUser } from "../lib/auth";
 
 const router: IRouter = Router();
 const safePath = (path: unknown) => typeof path === "string" && path.startsWith("/") && !path.startsWith("//") && !path.includes("\\") && !/[\r\n]/.test(path) ? path : "/";
 const origin = (req: Request) => `${req.get("x-forwarded-proto")?.split(",")[0] ?? "https"}://${req.get("x-forwarded-host")?.split(",")[0] ?? req.get("host")}`;
-const cookieOptions = { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" };
+const cookieOptions = sessionCookieOptions;
 
 router.get("/auth/user", (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
   res.json({ user: req.isAuthenticated() ? req.user : null });
 });
 router.get("/login", async (req, res) => {
+  if (req.isAuthenticated()) return res.redirect(safePath(req.query.returnTo));
   const config = await getOidcConfig();
   const state = oidc.randomState();
   const nonce = oidc.randomNonce();
@@ -52,8 +54,11 @@ router.get("/callback", async (req: Request, res: Response) => {
   }
 });
 router.get("/logout", async (req, res) => {
-  const config = await getOidcConfig();
+  const sid = getSessionId(req);
+  const session = sid ? await getSession(sid) : null;
   await clearSession(res, getSessionId(req));
+  if (!session || session.provider === "password") return res.redirect(safePath(req.query.returnTo));
+  const config = await getOidcConfig();
   const url = oidc.buildEndSessionUrl(config, {
     client_id: process.env.REPL_ID!,
     post_logout_redirect_uri: new URL(safePath(req.query.returnTo), `${origin(req)}/`).href,

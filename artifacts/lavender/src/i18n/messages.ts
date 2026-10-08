@@ -4,6 +4,23 @@ export const isLanguage = (value: unknown): value is Language => value === "ar" 
 
 // Arabic is the original shop copy. Only fixed UI/catalog text goes through this dictionary.
 export const english: Record<string, string> = {
+  "أدخلي بريداً إلكترونياً صحيحاً وكلمة مرور من 10 إلى 128 حرفاً.": "Enter a valid email address and a password of 10 to 128 characters.",
+  "كلمتا المرور غير متطابقتين.": "The passwords do not match.",
+  "البريد الإلكتروني أو كلمة المرور غير صحيحة.": "The email address or password is incorrect.",
+  "هذا البريد مرتبط بحساب موجود. استخدمي طريقة الدخول الحالية لهذا الحساب؛ لا يتم ربط الحسابات تلقائياً.": "This email belongs to an existing account. Use that account’s current sign-in method; accounts are not linked automatically.",
+  "محاولات كثيرة. انتظري قليلاً ثم حاولي مجدداً.": "Too many attempts. Wait a little and try again.",
+  "استخدمي بريدكِ وكلمة مرور خاصة بالمتجر، وليست كلمة مرور بريدكِ الإلكتروني.": "Use your email address and a password for this store, not your email account’s password.",
+  "البريد الإلكتروني": "Email address",
+  "كلمة مرور المتجر": "Store password",
+  "إخفاء كلمة المرور": "Hide password",
+  "إظهار كلمة المرور": "Show password",
+  "من 10 إلى 128 حرفاً.": "10 to 128 characters.",
+  "تأكيد كلمة المرور": "Confirm password",
+  "جارٍ المتابعة…": "Continuing…",
+  "يبقى تسجيل دخولكِ محفوظاً لمدة 30 يوماً على هذا الجهاز. سجّلي الخروج إذا كان الجهاز مشتركاً.": "You stay signed in for 30 days on this device. Log out if you share this device.",
+  "أو": "or",
+  "المتابعة عبر خدمة تسجيل الدخول": "Continue with sign-in provider",
+  "لحسابات خدمة الدخول الحالية، تابعي بالطريقة نفسها. في المعاينة قد تُفتح صفحة الدخول في تبويب جديد.": "For existing provider accounts, continue with the same sign-in method. In the preview, sign-in may open in a new tab.",
   "تابعينا على إنستغرام": "Follow us on Instagram",
   "اختاري الدرجة": "Choose a shade",
   "اختاري البكج — خيارات أخرى": "Choose a package — more options",

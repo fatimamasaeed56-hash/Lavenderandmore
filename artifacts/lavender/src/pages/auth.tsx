@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "wouter";
-import { ArrowLeft, ArrowRight, Heart, LockKeyhole, LogOut, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Heart, LockKeyhole, LogOut, ShieldCheck } from "lucide-react";
 import { useAuth } from "@workspace/replit-auth-web";
 import { useLanguage } from "@/i18n/context";
 import { LanguageSwitch } from "@/components/language-switch";
@@ -12,9 +12,65 @@ export default function AuthPage({ mode }: { mode: "login" | "signup" }) {
   const { t, language, dir } = useLanguage();
   const { user, isLoading, isAuthenticated, login, logout } = useAuth();
   const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmation, setConfirmation] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [pending, setPending] = useState(false);
+  const submitting = useRef(false);
   const isSignup = mode === "signup";
 
+  useEffect(() => {
+    setError("");
+    setPassword("");
+    setConfirmation("");
+    setShowPassword(false);
+  }, [mode]);
+
+  async function submitCredentials(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (submitting.current) return;
+    setError("");
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || password.length < 10 || password.length > 128) {
+      setError("أدخلي بريداً إلكترونياً صحيحاً وكلمة مرور من 10 إلى 128 حرفاً.");
+      return;
+    }
+    if (isSignup && password !== confirmation) {
+      setError("كلمتا المرور غير متطابقتين.");
+      return;
+    }
+    submitting.current = true;
+    setPending(true);
+    try {
+      const response = await fetch(isSignup ? "/api/auth/register" : "/api/auth/password-login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password }),
+      });
+      if (!response.ok) {
+        const messages: Record<number, string> = {
+          400: "أدخلي بريداً إلكترونياً صحيحاً وكلمة مرور من 10 إلى 128 حرفاً.",
+          401: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+          409: "هذا البريد مرتبط بحساب موجود. استخدمي طريقة الدخول الحالية لهذا الحساب؛ لا يتم ربط الحسابات تلقائياً.",
+          429: "محاولات كثيرة. انتظري قليلاً ثم حاولي مجدداً.",
+        };
+        setError(messages[response.status] ?? "تعذّر إكمال العملية. تحقّقي من الاتصال وحاولي مرة أخرى.");
+        return;
+      }
+      setPassword("");
+      setConfirmation("");
+      window.location.assign(import.meta.env.BASE_URL);
+    } catch {
+      setError("تعذّر إكمال العملية. تحقّقي من الاتصال وحاولي مرة أخرى.");
+    } finally {
+      submitting.current = false;
+      setPending(false);
+    }
+  }
+
   function continueSecurely(action: () => void) {
+    if (submitting.current) return;
     setError("");
     try {
       action();
@@ -53,7 +109,7 @@ export default function AuthPage({ mode }: { mode: "login" | "signup" }) {
           </p>
         </section>
 
-        <section aria-labelledby="auth-heading" aria-busy={isLoading} className="rise rounded-[32px] border border-primary/15 bg-card/85 px-6 py-8 shadow-[0_24px_65px_-40px_hsl(289_32%_30%/0.35)] sm:px-10 sm:py-10" style={{ animationDelay: "120ms" }}>
+        <section aria-labelledby="auth-heading" aria-busy={isLoading || pending} className="rise rounded-[32px] border border-primary/15 bg-card/85 px-6 py-8 shadow-[0_24px_65px_-40px_hsl(289_32%_30%/0.35)] sm:px-10 sm:py-10" style={{ animationDelay: "120ms" }}>
           {isLoading ? (
             <div role="status" className="py-8">
                <h1 id="auth-heading" className="sr-only">{t("جارٍ التحقق من حسابكِ")}</h1>
@@ -85,23 +141,51 @@ export default function AuthPage({ mode }: { mode: "login" | "signup" }) {
             <>
                <nav aria-label={t("خيارات الحساب")} className="mb-8 grid grid-cols-2 rounded-full border border-primary/10 bg-secondary/60 p-1">
                 {([{ path: "/login", label: "تسجيل الدخول", active: !isSignup }, { path: "/signup", label: "إنشاء حساب", active: isSignup }]).map(({ path, label, active }) => (
-                   <Link key={path} href={path} aria-current={active ? "page" : undefined} className={`rounded-full px-3 py-3 text-center text-sm ${active ? "bg-primary text-primary-foreground" : "text-primary hover:bg-card/70"} ${focus}`}>{t(label)}</Link>
+                   <Link key={path} href={path} aria-disabled={pending} onClick={(event) => { if (submitting.current) event.preventDefault(); }} aria-current={active ? "page" : undefined} className={`rounded-full px-3 py-3 text-center text-sm ${active ? "bg-primary text-primary-foreground" : "text-primary hover:bg-card/70"} ${focus}`}>{t(label)}</Link>
                 ))}
               </nav>
                <p className="text-sm text-muted-foreground">{t(isSignup ? "بداية جميلة مع لافندر" : "مكانكِ بين تفاصيلنا")}</p>
                <h1 id="auth-heading" className="mt-2 font-amiri text-4xl leading-relaxed text-primary">{t(isSignup ? "أهلاً بكِ في عالمنا" : "أهلاً بعودتكِ")}</h1>
               <p id="auth-explanation" className="mt-4 text-sm leading-loose text-foreground/80">
-                 {t(isSignup ? "لإنشاء حسابكِ، تابعي إلى شاشة المصادقة الآمنة. يمكنكِ هناك إنشاء حساب جديد أو تسجيل الدخول إلى حساب موجود." : "للدخول إلى حسابكِ، تابعي إلى شاشة المصادقة الآمنة. يمكنكِ هناك تسجيل الدخول أو إنشاء حساب جديد.")}
+                 {t("استخدمي بريدكِ وكلمة مرور خاصة بالمتجر، وليست كلمة مرور بريدكِ الإلكتروني.")}
               </p>
-              <button type="button" onClick={() => continueSecurely(login)} aria-describedby="auth-explanation" className={`mt-8 flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-primary px-5 py-4 text-primary-foreground shadow-[0_14px_30px_-16px_hsl(289_32%_36%/0.5)] transition-transform motion-safe:hover:-translate-y-0.5 ${focus}`} data-testid="button-auth-continue">
+              <form onSubmit={submitCredentials} noValidate className="mt-6 space-y-4" aria-describedby="auth-explanation auth-session">
+                <fieldset disabled={pending} className="space-y-4 disabled:opacity-65">
+                  <div className="space-y-2">
+                    <label htmlFor="auth-email" className="block text-sm text-primary">{t("البريد الإلكتروني")}</label>
+                    <input id="auth-email" name="email" type="email" autoComplete="email" dir="ltr" required value={email} onChange={(event) => setEmail(event.target.value)} className={`min-h-12 w-full rounded-xl border border-primary/20 bg-background/70 px-4 text-sm ${focus}`} data-testid="input-auth-email" />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="auth-password" className="block text-sm text-primary">{t("كلمة مرور المتجر")}</label>
+                    <div className="relative">
+                      <input id="auth-password" name="password" type={showPassword ? "text" : "password"} autoComplete={isSignup ? "new-password" : "current-password"} dir="ltr" required minLength={10} maxLength={128} value={password} onChange={(event) => setPassword(event.target.value)} aria-describedby="auth-password-hint" className={`min-h-12 w-full rounded-xl border border-primary/20 bg-background/70 px-4 pe-14 text-sm ${focus}`} data-testid="input-auth-password" />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={t(showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور")} aria-pressed={showPassword} className={`absolute right-1 top-1 grid h-10 w-10 place-items-center rounded-lg text-primary ${focus}`} data-testid="button-auth-password-visibility">
+                        {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                      </button>
+                    </div>
+                    <p id="auth-password-hint" className="text-xs leading-loose text-muted-foreground">{t("من 10 إلى 128 حرفاً.")}</p>
+                  </div>
+                  {isSignup && <div className="space-y-2">
+                    <label htmlFor="auth-confirmation" className="block text-sm text-primary">{t("تأكيد كلمة المرور")}</label>
+                    <input id="auth-confirmation" name="confirmation" type={showPassword ? "text" : "password"} autoComplete="new-password" dir="ltr" required minLength={10} maxLength={128} value={confirmation} onChange={(event) => setConfirmation(event.target.value)} className={`min-h-12 w-full rounded-xl border border-primary/20 bg-background/70 px-4 text-sm ${focus}`} data-testid="input-auth-confirmation" />
+                  </div>}
+                  <button type="submit" disabled={pending} className={`flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-primary px-5 py-4 text-primary-foreground transition-transform motion-safe:enabled:hover:-translate-y-0.5 disabled:cursor-wait ${focus}`} data-testid="button-auth-password-submit">
+                    <LockKeyhole className="h-4 w-4" aria-hidden="true" />
+                    <span role="status">{t(pending ? "جارٍ المتابعة…" : isSignup ? "إنشاء حساب" : "تسجيل الدخول")}</span>
+                  </button>
+                </fieldset>
+              </form>
+              <p id="auth-session" className="mt-4 text-center text-xs leading-loose text-muted-foreground">{t("يبقى تسجيل دخولكِ محفوظاً لمدة 30 يوماً على هذا الجهاز. سجّلي الخروج إذا كان الجهاز مشتركاً.")}</p>
+              <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-primary/15" /><span>{t("أو")}</span><span className="h-px flex-1 bg-primary/15" /></div>
+              <button type="button" disabled={pending} onClick={() => continueSecurely(login)} aria-describedby="auth-provider-explanation" className={`flex min-h-12 w-full items-center justify-center gap-3 rounded-full border border-primary/25 px-5 py-3 text-primary transition-transform motion-safe:enabled:hover:-translate-y-0.5 disabled:opacity-50 ${focus}`} data-testid="button-auth-continue">
                 <LockKeyhole className="h-4 w-4 shrink-0" aria-hidden="true" />
-                 {t(isSignup ? "المتابعة لإنشاء حساب" : "المتابعة لتسجيل الدخول")}
+                 {t("المتابعة عبر خدمة تسجيل الدخول")}
                  <ArrowLeft className="h-4 w-4 shrink-0 ltr:rotate-180" aria-hidden="true" />
               </button>
-               <p className="mt-4 text-center text-xs leading-loose text-muted-foreground">{t("ستنتقلين إلى خدمة تسجيل الدخول الآمنة، وقد تطلب كلمة مرور حسابكِ أو طريقة تحقق أخرى. لا توجد كلمة مرور منفصلة للمتجر. عند استخدام المعاينة، تُفتح صفحة الدخول في تبويب جديد.")}</p>
+               <p id="auth-provider-explanation" className="mt-3 text-center text-xs leading-loose text-muted-foreground">{t("لحسابات خدمة الدخول الحالية، تابعي بالطريقة نفسها. في المعاينة قد تُفتح صفحة الدخول في تبويب جديد.")}</p>
               <div className="mt-7 border-t border-primary/10 pt-5 text-center text-sm leading-loose">
                  <span className="text-muted-foreground">{t(isSignup ? "لديكِ حساب بالفعل؟ " : "هذه زيارتكِ الأولى؟ ")}</span>
-                 <Link href={isSignup ? "/login" : "/signup"} className={`rounded text-primary underline decoration-primary/30 underline-offset-4 ${focus}`}>{t(isSignup ? "تسجيل الدخول" : "إنشاء حساب")}</Link>
+                 <Link href={isSignup ? "/login" : "/signup"} aria-disabled={pending} onClick={(event) => { if (submitting.current) event.preventDefault(); }} className={`rounded text-primary underline decoration-primary/30 underline-offset-4 ${focus}`}>{t(isSignup ? "تسجيل الدخول" : "إنشاء حساب")}</Link>
               </div>
             </>
           )}

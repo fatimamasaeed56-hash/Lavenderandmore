@@ -5,7 +5,8 @@ import { eq } from "drizzle-orm";
 import type { Request, Response } from "express";
 
 export const SESSION_COOKIE = "sid";
-const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
+const SESSION_TTL = 30 * 24 * 60 * 60 * 1000;
+export const sessionCookieOptions = { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" };
 export type AuthUser = {
   id: string;
   email: string | null;
@@ -15,7 +16,8 @@ export type AuthUser = {
 };
 export type SessionData = {
   user: AuthUser;
-  access_token: string;
+  provider?: "password" | "oidc";
+  access_token?: string;
   refresh_token?: string;
   expires_at?: number;
 };

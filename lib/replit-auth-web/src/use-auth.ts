@@ -33,7 +33,7 @@ export function useAuth(): AuthState {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/auth/user", { credentials: "include" })
+    const refresh = () => fetch("/api/auth/user", { credentials: "include", cache: "no-store" })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json() as Promise<{ user: AuthUser | null }>;
@@ -50,7 +50,9 @@ export function useAuth(): AuthState {
           setIsLoading(false);
         }
       });
-    return () => { cancelled = true; };
+    void refresh();
+    window.addEventListener("focus", refresh);
+    return () => { cancelled = true; window.removeEventListener("focus", refresh); };
   }, []);
 
   const login = useCallback(() => {

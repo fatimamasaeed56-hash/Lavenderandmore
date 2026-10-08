@@ -15,6 +15,35 @@ tags:
   - name: Feedback
     description: Customer category feedback
 paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      operationId: registerPasswordAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordCredentials"
+      responses:
+        "201": { description: Account created and secure session cookie set }
+        "400": { description: Invalid input }
+        "409": { description: Email unavailable; use existing sign-in method }
+        "429": { description: Too many attempts }
+  /auth/password-login:
+    post:
+      tags: [Auth]
+      operationId: loginPasswordAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordCredentials"
+      responses:
+        "200": { description: Secure session cookie set }
+        "401": { description: Invalid credentials }
+        "429": { description: Too many attempts }
   /auth/user:
     get:
       tags: [Auth]
@@ -196,6 +225,12 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorEnvelope"
   schemas:
+    PasswordCredentials:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        password: { type: string, minLength: 10, maxLength: 128 }
     FeedbackInput:
       type: object
       required: [category, text]

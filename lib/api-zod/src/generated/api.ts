@@ -8,6 +8,36 @@
 import * as zod from 'zod';
 
 
+export const registerPasswordAccountBodyEmailMax = 254;
+
+export const registerPasswordAccountBodyPasswordMin = 10;
+export const registerPasswordAccountBodyPasswordMax = 128;
+
+
+
+export const RegisterPasswordAccountBody = zod.object({
+  "email": zod.string().email().max(registerPasswordAccountBodyEmailMax),
+  "password": zod.string().min(registerPasswordAccountBodyPasswordMin).max(registerPasswordAccountBodyPasswordMax)
+})
+
+export const RegisterPasswordAccountResponse = zod.void()
+
+
+export const loginPasswordAccountBodyEmailMax = 254;
+
+export const loginPasswordAccountBodyPasswordMin = 10;
+export const loginPasswordAccountBodyPasswordMax = 128;
+
+
+
+export const LoginPasswordAccountBody = zod.object({
+  "email": zod.string().email().max(loginPasswordAccountBodyEmailMax),
+  "password": zod.string().min(loginPasswordAccountBodyPasswordMin).max(loginPasswordAccountBodyPasswordMax)
+})
+
+export const LoginPasswordAccountResponse = zod.unknown()
+
+
 export const GetCurrentAuthUserResponse = zod.object({
   "user": zod.union([zod.object({
   "id": zod.string(),

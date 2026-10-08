@@ -21,4 +21,5 @@ export * from './healthStatus';
 export * from './listFeedback200';
 export * from './listFeedbackParams';
 export * from './logoutBrowserSessionParams';
+export * from './passwordCredentials';
 export * from './requestFeedbackUpload200';

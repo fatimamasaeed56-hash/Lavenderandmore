@@ -5,6 +5,16 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export interface PasswordCredentials {
+  /** @maxLength 254 */
+  email: string;
+  /**
+     * @minLength 10
+     * @maxLength 128
+     */
+  password: string;
+}
+
 export type FeedbackCategory = typeof FeedbackCategory[keyof typeof FeedbackCategory];
 
 
