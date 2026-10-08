@@ -58,8 +58,8 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
   const cat = categories.find((c) => c.id === p.category)?.label;
   const minimalCard = ["perfume-cookie-crave", "perfume-vanilla-freak", "perfume-whipped-pleasure", "perfume-berry-on-top"].includes(p.id);
   return (
-    <article className="group reveal" style={{ transitionDelay: `${(index % 4) * 80}ms` }} data-testid={`card-product-${p.id}`}>
-      <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-card shadow-[0_12px_30px_-24px_hsl(289_32%_30%/0.35)]">
+    <article className="group reveal flex h-full min-w-0 flex-col" style={{ transitionDelay: `${(index % 4) * 80}ms` }} data-testid={`card-product-${p.id}`}>
+      <div className="relative shrink-0 overflow-hidden rounded-2xl border border-primary/10 bg-card shadow-[0_12px_30px_-24px_hsl(289_32%_30%/0.35)]">
         <button onClick={onOpen} className="block w-full aspect-square p-3 sm:p-4 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-[-3px]" aria-label={`${t("عرض تفاصيل")} ${p.name}`} data-testid={`button-open-${p.id}`}>
           <img src={p.image} alt={p.name} loading="lazy" className="h-full w-full object-contain" />
         </button>
@@ -67,13 +67,14 @@ function ProductCard({ p, fav, onFav, onOpen, onAdd, index }: { p: Product; fav:
           <Heart className={`h-4 w-4 transition-colors ${fav ? "fill-primary text-primary" : "text-primary/70"}`} />
         </button>
       </div>
-      <div className="px-2 pt-4 text-center">
+      <div className="flex flex-1 flex-col px-2 pt-4 text-center">
         {!minimalCard && <p className="text-xs tracking-wide text-muted-foreground">{cat}</p>}
         <h3 className="font-amiri text-xl text-foreground mt-1">{p.name}</h3>
         {productVolumeLabel(p, language) && <p className="mt-2 text-sm text-muted-foreground" data-testid={`text-volume-${p.id}`}>{productVolumeLabel(p, language)}</p>}
         <p className="mt-1 text-sm text-primary" data-testid={`text-price-${p.id}`}>{formatProductPrice(p, 1, language)}</p>
         {p.perItem && <p className="mt-1 text-xs text-muted-foreground">{t("للقطعة الواحدة، وليس لكل ما في الصورة")}</p>}
-        <button onClick={onAdd} className="mt-3 w-full rounded-xl border border-primary/15 bg-secondary/60 px-2 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary" data-testid={`button-add-${p.id}`}>
+        <div className="flex-1 min-h-3" />
+        <button onClick={onAdd} className="w-full shrink-0 rounded-xl border border-primary/15 bg-secondary/60 px-2 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary" data-testid={`button-add-${p.id}`}>
           {t("شراء")}
         </button>
       </div>
