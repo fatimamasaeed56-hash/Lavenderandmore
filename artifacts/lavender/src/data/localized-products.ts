@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "pearlmax-razors": {
+    name: "PearlMax — Body razor pack", short: "PearlMax razors — 4 + 1 pack",
+    description: "PearlMax body razors in the packaging pictured, with 4 razors + 1 free as labeled on the pack.",
+  },
   "global-cotton-pads": {
     name: "GLOBAL — Makeup remover cotton pads", short: "Makeup remover cotton pads — 100 pads",
     description: "GLOBAL makeup remover cotton pads, a pack of 100. Good quality.",

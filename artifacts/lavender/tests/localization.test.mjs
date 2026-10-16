@@ -76,6 +76,16 @@ test("cup catalog contains ten unique designs at 20 ILS with real images and bil
   assert.equal(translate("en", "شراء"), "Buy");
 });
 
+test("PearlMax razors are a separate body care pack priced at 5 ILS", () => {
+  const product = products.find((p) => p.id === "pearlmax-razors");
+  assert.ok(product);
+  assert.equal(product.category, "bodycare");
+  assert.equal(product.price, 5);
+  assert.equal(product.suppliedPhoto, true);
+  assert.ok(product.image.endsWith("/images/pearlmax-razors.jpeg"));
+  assert.equal(products.find((p) => p.id === "body-razors").price, 10);
+});
+
 test("cosmetics contains only the replacement products with per-item pricing", () => {
   const cosmetics = products.filter((p) => p.category === "cosmetics" && p.variantGroup !== "lip-liner-shades");
   const prices = { "global-cotton-pads": 10, "nail-file": 5, "sweet-beauty-makeup-brushes": 10, "mini-hair-straightener": 15, "sadoer-strawberry-hand-cream": 2, "brow-lash-kit": 10, "contour-palette": 5, "essence-extreme-mascara": 10, "lip-tint": 2, "liquid-lipstick": 5, "rose-water": 10 };
