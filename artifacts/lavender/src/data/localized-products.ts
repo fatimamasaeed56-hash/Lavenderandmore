@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "sadoer-strawberry-hand-cream": {
+    name: "SADOER STRAWBERRY — Hand cream", short: "Strawberry hand cream",
+    description: "SADOER STRAWBERRY hand cream in the pink packaging pictured.",
+  },
   "brow-lash-kit": {
     name: "Brow & lash kit", short: "Brow & lash kit — Sweet beauty",
     description: "Sweet beauty eyebrow and eyelash tool kit in the packaging pictured.",
