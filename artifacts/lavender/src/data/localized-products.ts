@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "global-cotton-pads": {
+    name: "GLOBAL — Makeup remover cotton pads", short: "Makeup remover cotton pads — 100 pads",
+    description: "GLOBAL makeup remover cotton pads, a pack of 100. Good quality.",
+  },
   "nail-file": {
     name: "Nail file", short: "Nail file in assorted colors",
     description: "PROFESSIONAL NAIL FILES nail file in the colors pictured.",
