@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "sweet-beauty-makeup-brushes": {
+    name: "Sweet beauty — Makeup brush set", short: "Makeup brush set in assorted colors",
+    description: "Sweet beauty makeup brush set in the packaging and colors pictured.",
+  },
   "mini-hair-straightener": {
     name: "Make Time — Mini hair straightener", short: "Pink mini hair straightener",
     description: "Pink Make Time mini hair straightener in the case pictured.",
