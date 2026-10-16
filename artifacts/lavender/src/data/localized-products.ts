@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "nail-file": {
+    name: "Nail file", short: "Nail file in assorted colors",
+    description: "PROFESSIONAL NAIL FILES nail file in the colors pictured.",
+  },
   "sweet-beauty-makeup-brushes": {
     name: "Sweet beauty — Makeup brush set", short: "Makeup brush set in assorted colors",
     description: "Sweet beauty makeup brush set in the packaging and colors pictured.",
