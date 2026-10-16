@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "brow-lash-kit": {
+    name: "Brow & lash kit", short: "Brow & lash kit — Sweet beauty",
+    description: "Sweet beauty eyebrow and eyelash tool kit in the packaging pictured.",
+  },
   "body-razors": {
     name: "Body razors", short: "Pink body razors",
     description: "Body razors in the packaging pictured.",
