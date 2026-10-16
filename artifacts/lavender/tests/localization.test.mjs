@@ -88,7 +88,7 @@ test("PearlMax razors are a separate body care pack priced at 5 ILS", () => {
 
 test("cosmetics contains only the replacement products with per-item pricing", () => {
   const cosmetics = products.filter((p) => p.category === "cosmetics" && p.variantGroup !== "lip-liner-shades");
-  const prices = { "global-cotton-pads": 10, "nail-file": 5, "sweet-beauty-makeup-brushes": 10, "mini-hair-straightener": 15, "sadoer-strawberry-hand-cream": 2, "brow-lash-kit": 10, "contour-palette": 5, "essence-extreme-mascara": 10, "lip-tint": 2, "liquid-lipstick": 5, "rose-water": 10 };
+  const prices = { "manicure-tool-set": 10, "global-cotton-pads": 10, "nail-file": 5, "sweet-beauty-makeup-brushes": 10, "mini-hair-straightener": 15, "sadoer-strawberry-hand-cream": 2, "brow-lash-kit": 10, "contour-palette": 5, "essence-extreme-mascara": 10, "lip-tint": 2, "liquid-lipstick": 5, "rose-water": 10 };
   assert.deepEqual(cosmetics.map((p) => p.id).sort(), Object.keys(prices).sort());
   for (const p of cosmetics) {
     assert.equal(p.price, prices[p.id]);

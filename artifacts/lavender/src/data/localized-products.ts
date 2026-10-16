@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "manicure-tool-set": {
+    name: "Manicure tool set", short: "Nail care tool set",
+    description: "MANICURE TOOL SET with the black tools and packaging pictured.",
+  },
   "pearlmax-razors": {
     name: "PearlMax — Body razor pack", short: "PearlMax razors — 4 + 1 pack",
     description: "PearlMax body razors in the packaging pictured, with 4 razors + 1 free as labeled on the pack.",
