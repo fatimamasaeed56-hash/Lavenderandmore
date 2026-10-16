@@ -3,6 +3,10 @@ import { translate, type Language } from "@/i18n/messages";
 
 // IDs, prices and images always come from the original catalog.
 export const englishProducts: Record<string, { name: string; short: string; description: string }> = {
+  "mini-hair-straightener": {
+    name: "Make Time — Mini hair straightener", short: "Pink mini hair straightener",
+    description: "Pink Make Time mini hair straightener in the case pictured.",
+  },
   "sadoer-strawberry-hand-cream": {
     name: "SADOER STRAWBERRY — Hand cream", short: "Strawberry hand cream",
     description: "SADOER STRAWBERRY hand cream in the pink packaging pictured.",

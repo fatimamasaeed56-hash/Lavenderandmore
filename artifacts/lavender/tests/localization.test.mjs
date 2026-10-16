@@ -78,7 +78,7 @@ test("cup catalog contains ten unique designs at 20 ILS with real images and bil
 
 test("cosmetics contains only the replacement products with per-item pricing", () => {
   const cosmetics = products.filter((p) => p.category === "cosmetics" && p.variantGroup !== "lip-liner-shades");
-  const prices = { "sadoer-strawberry-hand-cream": 2, "brow-lash-kit": 10, "contour-palette": 5, "essence-extreme-mascara": 10, "lip-tint": 2, "liquid-lipstick": 5, "rose-water": 10 };
+  const prices = { "mini-hair-straightener": 15, "sadoer-strawberry-hand-cream": 2, "brow-lash-kit": 10, "contour-palette": 5, "essence-extreme-mascara": 10, "lip-tint": 2, "liquid-lipstick": 5, "rose-water": 10 };
   assert.deepEqual(cosmetics.map((p) => p.id).sort(), Object.keys(prices).sort());
   for (const p of cosmetics) {
     assert.equal(p.price, prices[p.id]);
